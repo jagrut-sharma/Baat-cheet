@@ -10,11 +10,7 @@ export default function Post() {
     <div className="mb-4 w-[100%] rounded-md border border-gray-200 bg-white pb-2 shadow-md dark:border-gray-600 dark:bg-gray-700">
       <div className="mt-1 flex justify-start gap-2 px-4 pt-2.5 text-[1rem] leading-[18px] text-black dark:border-t-gray-600 dark:text-slate-50 md:gap-4">
         <div className="flex">
-          <AvatarEle
-            imgLink={"sdfdf"}
-            firstName={"jagrut"}
-            lastName={"sharma"}
-          />
+          <AvatarEle imgLink={""} firstName={"jagrut"} lastName={"sharma"} />
 
           <div className="item ml-2 flex flex-col justify-center gap-1 md:ml-0">
             {"Jagrut" + " " + "Sharma"}
