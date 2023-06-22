@@ -1,14 +1,16 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import { toast } from "react-toastify";
+import { toastConfig } from "../utils/constants";
 
 export const loginHandler = async (
   setAuthLoader,
-  navigate,
   baseURL,
-  redirectPath,
   formValue,
   setToken,
-  setUser
+  setUser,
+  setButtonLoader,
+  isRegister
 ) => {
   try {
     setAuthLoader(true);
@@ -38,24 +40,49 @@ export const loginHandler = async (
     setUser(user);
     localStorage.setItem("user", JSON.stringify(user));
 
+    if (isRegister) {
+      toast.success("Registered User", toastConfig);
+    } else {
+      toast.success("Logged In", toastConfig);
+    }
+
     setAuthLoader(false);
+    setButtonLoader({
+      login: false,
+      guest: false,
+      register: false,
+    });
   } catch (err) {
     setAuthLoader(false);
+    setButtonLoader({
+      login: false,
+      guest: false,
+      register: false,
+    });
     console.log(err);
     const errRes = err?.response?.data?.message ?? "";
     const errMsg = err?.response?.data?.error ?? "";
     console.log(`${err.response.status}:${errRes} ${errMsg}`);
+    toast.error(`${err.response.status}:${errRes} ${errMsg}`, {
+      position: "top-center",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
   }
 };
 
 export const signupHandler = async (
   setAuthLoader,
-  navigate,
   baseURL,
-  redirectPath,
   formValue,
   setToken,
-  setUser
+  setUser,
+  setButtonLoader
 ) => {
   try {
     setAuthLoader(true);
@@ -65,12 +92,12 @@ export const signupHandler = async (
 
     loginHandler(
       setAuthLoader,
-      navigate,
       baseURL,
-      redirectPath,
       formValue,
       setToken,
-      setUser
+      setUser,
+      setButtonLoader,
+      true
     );
   } catch (error) {
     setAuthLoader(false);
@@ -78,6 +105,16 @@ export const signupHandler = async (
     const errRes = error?.response?.data?.message ?? "";
     const errMsg = error?.response?.data?.error ?? "";
     console.log(`${error?.response?.status}:${errMsg} ${errRes}`);
+    toast.error(`${error?.response?.status}:${errMsg} ${errRes}`, {
+      position: "top-center",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
   }
 };
 
@@ -86,4 +123,5 @@ export const logoutHandler = (setToken, setUser) => {
   setUser(null);
   localStorage.removeItem("token");
   localStorage.removeItem("user");
+  toast.success("Logged out", toastConfig);
 };

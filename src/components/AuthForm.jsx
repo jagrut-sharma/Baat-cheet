@@ -6,8 +6,16 @@ import { useImmer } from "use-immer";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
 import { guestUser } from "../utils/constants";
+import { ClipLoader } from "react-spinners";
 
-export default function AuthForm({ handleFormSubmit, err, setErr, loader }) {
+export default function AuthForm({
+  handleFormSubmit,
+  err,
+  setErr,
+  loader,
+  buttonLoader,
+  setButtonLoader,
+}) {
   const [searchParams] = useSearchParams();
   const isRegister = searchParams.get("mode") === "register";
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -20,6 +28,7 @@ export default function AuthForm({ handleFormSubmit, err, setErr, loader }) {
     password: "",
     cnfPassword: "",
   });
+
   const location = useLocation();
 
   const handleInputChange = (e) => {
@@ -31,6 +40,10 @@ export default function AuthForm({ handleFormSubmit, err, setErr, loader }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    setButtonLoader((draft) => {
+      draft[e.target.name] = true;
+    });
 
     if (isRegister) {
       if (formData.password !== formData.cnfPassword) {
@@ -47,11 +60,16 @@ export default function AuthForm({ handleFormSubmit, err, setErr, loader }) {
     }
   };
 
-  const handleGuestLogin = () => {
+  const handleGuestLogin = (e) => {
+    setButtonLoader((draft) => {
+      draft[e.target.name] = true;
+    });
+
     setFormData((draft) => {
       draft.email = guestUser.email;
       draft.password = guestUser.password;
     });
+
     handleFormSubmit(guestUser);
   };
 
@@ -81,6 +99,7 @@ export default function AuthForm({ handleFormSubmit, err, setErr, loader }) {
     <main className="flex items-center justify-center">
       <form
         onSubmit={handleSubmit}
+        name={isRegister ? "register" : "login"}
         className="border-1 m-4 flex min-w-[15rem] flex-col items-center gap-4 rounded-md border border-gray-400 p-6 text-blue-700 shadow-lg dark:border-gray-300 dark:bg-gray-700 dark:text-slate-50 sm:min-w-[22rem]"
       >
         <h2 className="font-Poppins text-3xl font-bold dark:text-blue-500">
@@ -243,7 +262,17 @@ export default function AuthForm({ handleFormSubmit, err, setErr, loader }) {
             className="w-full cursor-pointer rounded-md bg-blue-700 p-1 font-OpenSans text-base font-bold text-white disabled:opacity-30 dark:bg-blue-600"
             disabled={loader}
           >
-            Login
+            {buttonLoader.login ? (
+              <ClipLoader
+                color="#ffffff"
+                size={20}
+                cssOverride={{
+                  marginTop: "4px",
+                }}
+              />
+            ) : (
+              "Login"
+            )}
           </button>
         )}
 
@@ -252,9 +281,20 @@ export default function AuthForm({ handleFormSubmit, err, setErr, loader }) {
             type="button"
             className="w-full cursor-pointer rounded-md bg-gray-700 p-1 font-OpenSans text-base font-bold text-slate-100 disabled:opacity-30 dark:bg-gray-400 dark:text-blue-600"
             onClick={handleGuestLogin}
+            name="guest"
             disabled={loader}
           >
-            Guest Login
+            {buttonLoader.guest ? (
+              <ClipLoader
+                color="#ffffff"
+                size={20}
+                cssOverride={{
+                  marginTop: "4px",
+                }}
+              />
+            ) : (
+              "Guest Login"
+            )}
           </button>
         )}
 
@@ -263,7 +303,17 @@ export default function AuthForm({ handleFormSubmit, err, setErr, loader }) {
             className="w-full cursor-pointer rounded-md bg-blue-700 p-1 font-OpenSans text-base font-bold text-white disabled:opacity-30 dark:bg-blue-600"
             disabled={loader}
           >
-            Create Account
+            {buttonLoader.register ? (
+              <ClipLoader
+                color="#ffffff"
+                size={20}
+                cssOverride={{
+                  marginTop: "4px",
+                }}
+              />
+            ) : (
+              "Register"
+            )}
           </button>
         )}
 

@@ -1,22 +1,26 @@
 import { useEffect, useState } from "react";
-import {
-  Navigate,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Navigate, useLocation, useSearchParams } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { useAuth } from "../context/AuthContext";
 import AuthForm from "../components/AuthForm";
 import Nav from "../components/Nav";
 import { loginHandler, signupHandler } from "../services/authServices";
+import { useImmer } from "use-immer";
 
 export default function Authentication() {
   const [error, setError] = useState(null);
   const [searchParams] = useSearchParams();
   const [theme, setTheme] = useState(localStorage.getItem("theme"));
+  const [buttonLoader, setButtonLoader] = useImmer({
+    login: false,
+    guest: false,
+    register: false,
+  });
 
   const { token, setAuthLoader, authLoader, setToken, setUser } = useAuth();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const location = useLocation();
 
   const mode = searchParams.get("mode") || "signin";
@@ -51,22 +55,20 @@ export default function Authentication() {
     if (mode === "register") {
       signupHandler(
         setAuthLoader,
-        navigate,
         baseURL,
-        redirectPath,
         formValue,
         setToken,
-        setUser
+        setUser,
+        setButtonLoader
       );
     } else {
       loginHandler(
         setAuthLoader,
-        navigate,
         baseURL,
-        redirectPath,
         formValue,
         setToken,
-        setUser
+        setUser,
+        setButtonLoader
       );
     }
   };
@@ -83,7 +85,10 @@ export default function Authentication() {
             err={error}
             setErr={setError}
             loader={authLoader}
+            buttonLoader={buttonLoader}
+            setButtonLoader={setButtonLoader}
           />
+          <ToastContainer className={"font-Poppins font-bold"} />
         </div>
       )}
     </>

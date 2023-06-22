@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import Nav from "../components/Nav";
 import NavSideBar from "../components/NavSideBar";
@@ -39,6 +41,7 @@ export default function RootLayout() {
         <Outlet />
         <RightSideBar />
       </div>
+      <ToastContainer className={"font-Poppins font-bold"} />
     </div>
   );
 }
