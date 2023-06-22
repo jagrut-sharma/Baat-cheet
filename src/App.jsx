@@ -7,11 +7,17 @@ import Explore from "./pages/Explore";
 import Bookmarks from "./pages/Bookmarks";
 import Profile from "./pages/Profile";
 import Liked from "./pages/Liked";
+import Authentication from "./pages/Authentication";
+import RequireAuth from "./components/RequireAuth";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout />,
+    element: (
+      <RequireAuth>
+        <RootLayout />
+      </RequireAuth>
+    ),
     children: [
       {
         index: true,
@@ -34,6 +40,10 @@ const router = createBrowserRouter([
         element: <Profile />,
       },
     ],
+  },
+  {
+    path: "auth",
+    element: <Authentication />,
   },
 ]);
 

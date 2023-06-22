@@ -5,7 +5,7 @@ import Logo from "./Logo";
 import { Link } from "react-router-dom";
 
 // eslint-disable-next-line react/prop-types
-export default function Nav({ theme, setTheme }) {
+export default function Nav({ theme, setTheme, login }) {
   const handleThemeSwitch = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
@@ -24,26 +24,28 @@ export default function Nav({ theme, setTheme }) {
         </h1>
       </Link>
 
-      <form
-        className="flex  justify-self-center rounded-3xl border border-stone-400 p-1 focus-within:border-blue-400"
-        onSubmit={handleSearchForm}
-      >
-        <button
-          htmlFor="search"
-          className="cursor-pointer rounded-full bg-blue-600 p-2"
+      {!login && (
+        <form
+          className="flex  justify-self-center rounded-3xl border border-stone-400 p-1 focus-within:border-blue-400"
+          onSubmit={handleSearchForm}
         >
-          <BsSearch size={"1rem"} />
-        </button>
-        <input
-          type="search"
-          name=""
-          id="search"
-          placeholder="Search users"
-          className="bg-transparent p-1 focus-visible:outline-none dark:text-slate-50"
-        />
-      </form>
+          <button
+            htmlFor="search"
+            className="cursor-pointer rounded-full bg-blue-600 p-2"
+          >
+            <BsSearch size={"1rem"} />
+          </button>
+          <input
+            type="search"
+            name=""
+            id="search"
+            placeholder="Search users"
+            className="bg-transparent p-1 focus-visible:outline-none dark:text-slate-50"
+          />
+        </form>
+      )}
 
-      <div className="mr-2 flex h-full items-center justify-self-end py-4 pr-2 sm:hidden">
+      <div className="col-start-3 mr-2 flex h-full items-center justify-self-end py-4 pr-2 sm:hidden">
         <button onClick={handleThemeSwitch}>
           {theme === "dark" ? (
             <FaSun size={"1.3rem"} color="#f59e0b" />
@@ -53,7 +55,7 @@ export default function Nav({ theme, setTheme }) {
         </button>
       </div>
 
-      <div className="hidden justify-self-end sm:block sm:p-4">
+      <div className="col-start-3 hidden justify-self-end sm:block sm:p-4">
         <Switch
           checked={theme === "dark"}
           onChange={handleThemeSwitch}

@@ -4,8 +4,16 @@ import AvatarEle from "../components/AvatarEle";
 import Post from "../components/Post";
 import SamplePost from "../components/SamplePost";
 import EditProfileModal from "../components/EditProfileModal";
+import { logoutHandler } from "../services/authServices";
+import { useAuth } from "../context/AuthContext";
 
 export default function Profile() {
+  const { setToken, setUser } = useAuth();
+
+  const handleLogout = () => {
+    logoutHandler(setToken, setUser);
+  };
+
   return (
     <main className="relative flex flex-col items-center">
       <div className="relative w-full px-6 py-4 md:px-8 lg:max-w-3xl">
@@ -22,7 +30,10 @@ export default function Profile() {
 
             <div className="flex md:hidden">
               <EditProfileModal />
-              <button className="mx-2 rounded-md bg-blue-600 p-2 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80">
+              <button
+                className="mx-2 rounded-md bg-blue-600 p-2 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
+                onClick={handleLogout}
+              >
                 <BiLogOut />
               </button>
             </div>
@@ -35,7 +46,10 @@ export default function Profile() {
 
             <div className="hidden md:flex">
               <EditProfileModal />
-              <button className="mx-2 rounded-xl bg-blue-600 p-2 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80">
+              <button
+                className="mx-2 rounded-xl bg-blue-600 p-2 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
+                onClick={handleLogout}
+              >
                 Logout
               </button>
             </div>
