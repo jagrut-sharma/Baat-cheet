@@ -123,5 +123,5 @@ export const logoutHandler = (setToken, setUser) => {
   setUser(null);
   localStorage.removeItem("token");
   localStorage.removeItem("user");
-  toast.success("Logged out", toastConfig);
+  toast.info("Logged out", toastConfig);
 };

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 import Nav from "../components/Nav";
 import NavSideBar from "../components/NavSideBar";
 import RightSideBar from "../components/RightSideBar";
 import { Outlet } from "react-router-dom";
+import AutoScroll from "../components/AutoScroll";
 
 export default function RootLayout() {
   const [theme, setTheme] = useState(localStorage.getItem("theme"));
@@ -34,14 +33,14 @@ export default function RootLayout() {
   }, [theme]);
 
   return (
-    <div className="relative grid min-h-[100dvh] grid-rows-rootLayout bg-gray-200 font-OpenSans dark:bg-gray-800">
+    <div className="relative grid min-h-[100dvh] grid-rows-rootLayout  scroll-smooth bg-gray-200 font-OpenSans dark:bg-gray-800">
       <Nav theme={theme} setTheme={setTheme} />
       <div className="relative grid grid-cols-responsiveOutlet grid-rows-responsiveOutlet md:grid-cols-rootlgColLayout md:grid-rows-outlet lg:grid-cols-rootColLayout">
         <NavSideBar />
+        <AutoScroll />
         <Outlet />
         <RightSideBar />
       </div>
-      <ToastContainer className={"font-Poppins font-bold"} />
     </div>
   );
 }

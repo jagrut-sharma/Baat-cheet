@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { Navigate, useLocation, useSearchParams } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 import { useAuth } from "../context/AuthContext";
 import AuthForm from "../components/AuthForm";
@@ -88,7 +86,6 @@ export default function Authentication() {
             buttonLoader={buttonLoader}
             setButtonLoader={setButtonLoader}
           />
-          <ToastContainer className={"font-Poppins font-bold"} />
         </div>
       )}
     </>
