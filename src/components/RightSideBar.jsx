@@ -1,11 +1,21 @@
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import AvatarEle from "./AvatarEle";
+import { useData } from "../context/DataContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function RightSideBar() {
-  const demoUsers = Array.from({ length: 25 }).map((_, i) =>
-    i % 2 === 0
-      ? { firstName: "John", lastName: "Smilga", userID: "@test123" }
-      : { firstName: "Jane", lastName: "Smilga", userID: "@test246" }
+  const {
+    dataState: { allUsers },
+  } = useData();
+
+  const {
+    user: { following, _id: userID },
+  } = useAuth();
+
+  const followingIDArr = following.map(({ _id }) => _id);
+
+  const suggestedUsers = allUsers.filter(
+    ({ _id }) => !followingIDArr.includes(_id) && _id !== userID
   );
 
   return (
@@ -17,23 +27,21 @@ export default function RightSideBar() {
               <div className="sticky top-0 z-[2] w-full bg-white py-2 pl-4 font-OpenSans text-[1.2rem] font-bold leading-[18px] text-blue-700 shadow dark:bg-gray-700 dark:text-slate-50">
                 Suggestions
               </div>
-              {demoUsers.map((user, i) => (
+              {suggestedUsers.map((user) => (
                 <div
                   className="mt-2.5 flex border-b border-b-gray-300 px-5 pt-2.5 text-[1rem] leading-[18px] text-black dark:border-b-gray-600 dark:text-slate-50"
-                  key={i}
+                  key={user._id}
                 >
                   <AvatarEle
-                    imgLink={
-                      "https://images.unsplash.com/photo-1587324438673-56c78a866b15?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=580&q=80"
-                    }
-                    firstName={user.firstName}
-                    lastName={user.lastName}
+                    imgLink={""}
+                    firstName={user?.firstName}
+                    lastName={user?.lastName}
                   />
 
                   <div className="item flex flex-col justify-center gap-1">
-                    {user.firstName + " " + user.lastName}
-                    <span className="text-[small]">{user.userID}</span>
-                    <button className="mb-2 mt-1 rounded-lg bg-blue-600 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80">
+                    {user?.firstName + " " + user?.lastName}
+                    <span className="text-[small]">{`@${user.username}`}</span>
+                    <button className="mb-2 mt-1 w-[5.6rem] rounded-lg bg-blue-600 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80">
                       Follow
                     </button>
                   </div>

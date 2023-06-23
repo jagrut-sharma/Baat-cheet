@@ -1,4 +1,7 @@
-export const ACTIONS = {};
+export const ACTIONS = {
+  FETCH_ALL_USERS: "FETCH ALL USERS",
+  FETCH_ALL_POSTS: "FETCH ALL POSTS",
+};
 
 export const guestUser = {
   email: "jagrut@gmail.com",

@@ -2,13 +2,17 @@ import { NavLink } from "react-router-dom";
 import { AiFillHome } from "react-icons/ai";
 import { FaCompass } from "react-icons/fa";
 import { BsFillBookmarkStarFill, BsFillHeartFill } from "react-icons/bs";
-import AvatarEle from "./AvatarEle.jsx";
 import * as Separator from "@radix-ui/react-separator";
 import { useState } from "react";
+
+import AvatarEle from "./AvatarEle.jsx";
 import Modal from "./Modal.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function NavSideBar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
+
   const getClassName = ({ isActive }) => {
     return isActive
       ? "flex w-[3rem] items-center justify-center rounded-md px-2 py-1 text-base font-bold hover:bg-blue-200 dark:hover:bg-slate-500 md:order-1 md:w-max bg-blue-200 dark:bg-slate-600"
@@ -74,11 +78,15 @@ export default function NavSideBar() {
 
         <NavLink to={"/profile"} className={getUserClass}>
           <div className="flex text-[1rem] leading-[18px] text-black dark:border-t-gray-600 dark:text-slate-50">
-            <AvatarEle imgLink={""} firstName={"jagrut"} lastName={"sharma"} />
+            <AvatarEle
+              imgLink={user?.pic}
+              firstName={user?.firstName}
+              lastName={user?.lastName}
+            />
 
             <div className="item hidden flex-col justify-center gap-1 font-normal md:flex">
-              {"Jagrut" + " " + "Sharma"}
-              <span className="text-[small]">{`test@123`}</span>
+              {`${user?.firstName} ${user?.lastName}`}
+              <span className="text-[small]">{`@${user?.username}`}</span>
             </div>
           </div>
         </NavLink>

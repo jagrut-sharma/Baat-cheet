@@ -21,9 +21,6 @@ export const loginHandler = async (
     } = res;
     const { _id: userID } = jwt_decode(token);
 
-    setToken(token);
-    localStorage.setItem("token", token);
-
     const userRes = await axios.get(
       `https://baatcheet-backend.vercel.app/api/user/${userID}`,
       {
@@ -38,7 +35,9 @@ export const loginHandler = async (
     } = userRes;
 
     setUser(user);
+    setToken(token);
     localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", token);
 
     if (isRegister) {
       toast.success("Registered User", toastConfig);
