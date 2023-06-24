@@ -34,6 +34,8 @@ export const createNewPost = async (token, dispatch, post) => {
       }
     );
 
+    console.log(res ? "" : "");
+
     getAllPosts(token, dispatch);
   } catch (err) {
     console.log(err);

@@ -2,7 +2,7 @@
 import { useContext, useEffect, useState } from "react";
 import { createContext } from "react";
 import { useImmerReducer } from "use-immer";
-import { dataReducer, initialData } from "../reducer/dataReducer";
+import { dataReducer, initialData } from "../reducer/DataReducer";
 import { useAuth } from "./AuthContext";
 import { getAllUsers } from "../services/userServices";
 import { getAllPosts } from "../services/postServices";
