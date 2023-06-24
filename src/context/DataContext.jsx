@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { createContext } from "react";
 import { useImmerReducer } from "use-immer";
 import { dataReducer, initialData } from "../reducer/dataReducer";
@@ -14,6 +14,7 @@ const DataContext = createContext({
 
 export const DataProvider = ({ children }) => {
   const [dataState, dataDispatch] = useImmerReducer(dataReducer, initialData);
+  const [dataLoader, setDataLoader] = useState(false);
   const { token } = useAuth();
 
   useEffect(() => {
@@ -26,6 +27,8 @@ export const DataProvider = ({ children }) => {
   const dataContext = {
     dataState,
     dataDispatch,
+    dataLoader,
+    setDataLoader,
   };
 
   return (

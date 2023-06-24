@@ -5,6 +5,7 @@ import SamplePost from "../components/SamplePost";
 // import AvatarEle from "../components/AvatarEle";
 // import { BsFillEmojiHeartEyesFill, BsFillImageFill } from "react-icons/bs";
 import NewPost from "../components/NewPost";
+import { useAuth } from "../context/AuthContext";
 import { useData } from "../context/DataContext";
 
 function classNames(...classes) {
@@ -13,13 +14,15 @@ function classNames(...classes) {
 
 export default function Home() {
   const [currCategory, setCurrCategory] = useState("Recent");
-  const { dataState } = useData();
+  const { user, token } = useAuth();
+  const { dataState, dataDispatch } = useData();
 
   const handleCategory = (e) => {
     setCurrCategory(e.target.name);
   };
 
   // console.log(currCategory);
+  console.log(dataState.allPosts);
 
   let postCategory = ["Recent", "Trending"];
 
@@ -50,7 +53,7 @@ export default function Home() {
           </Tab.List>
         </Tab.Group>
 
-        <NewPost />
+        <NewPost user={user} token={token} dataDispatch={dataDispatch} />
 
         <Post />
         <SamplePost />

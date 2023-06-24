@@ -1,12 +1,34 @@
+/* eslint-disable react/prop-types */
+import { useState } from "react";
 import AvatarEle from "./AvatarEle";
 import { BsFillEmojiHeartEyesFill, BsFillImageFill } from "react-icons/bs";
+import { createNewPost } from "../services/postServices";
 
-export default function NewPost() {
+export default function NewPost({ user, token, dataDispatch }) {
+  const [post, setPost] = useState("");
+
+  const handleNewPost = (e) => {
+    e.preventDefault();
+    const postDetails = {
+      content: post,
+    };
+    createNewPost(token, dataDispatch, postDetails);
+    setPost("");
+  };
+
+  const handleChange = (e) => {
+    setPost(e.target.value);
+  };
+
   return (
     <form className="mb-4 rounded-md border border-gray-300 bg-gray-50 shadow-md dark:border-gray-600 dark:bg-gray-700">
       <div className="flex border-b border-b-gray-300 dark:border-b-gray-500">
         <div className="m-2">
-          <AvatarEle imgLink="" firstName={"jagrut"} lastName={"sharma"} />
+          <AvatarEle
+            imgLink={user?.pic}
+            firstName={user?.firstName}
+            lastName={user?.lastName}
+          />
         </div>
 
         <textarea
@@ -16,6 +38,8 @@ export default function NewPost() {
           cols="30"
           rows="8"
           className="w-full resize-none bg-gray-50 p-4 font-OpenSans outline-none dark:bg-gray-700 dark:text-slate-50"
+          value={post}
+          onChange={handleChange}
         ></textarea>
       </div>
 
@@ -35,7 +59,7 @@ export default function NewPost() {
           </button>
         </div>
         <button
-          onClick={(e) => e.preventDefault()}
+          onClick={handleNewPost}
           className="m-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
         >
           Post

@@ -33,7 +33,7 @@ export default function RightSideBar() {
                   key={user._id}
                 >
                   <AvatarEle
-                    imgLink={""}
+                    imgLink={user?.pic}
                     firstName={user?.firstName}
                     lastName={user?.lastName}
                   />
