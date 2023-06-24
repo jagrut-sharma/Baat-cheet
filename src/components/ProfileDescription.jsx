@@ -5,9 +5,10 @@ import { useAuth } from "../context/AuthContext";
 import { logoutHandler } from "../services/authServices";
 
 export default function ProfileDescription() {
-  const { setToken, setUser } = useAuth();
+  const { setToken, setUser, user, setHasLoggedOut } = useAuth();
 
   const handleLogout = () => {
+    setHasLoggedOut(true);
     logoutHandler(setToken, setUser);
   };
 
@@ -15,11 +16,15 @@ export default function ProfileDescription() {
     <div className="mb-4 w-[100%] rounded border border-gray-200 bg-gray-50 px-4 py-4 shadow dark:border-gray-600 dark:bg-gray-700">
       <div className="flex items-center justify-between">
         <div className="flex">
-          <AvatarEle imgLink="" firstName={"jagrut"} lastName={"sharma"} />
+          <AvatarEle
+            imgLink={user?.pic}
+            firstName={user?.firstName}
+            lastName={user?.lastName}
+          />
 
           <p className="item ml-2 flex flex-col justify-center gap-1 dark:text-gray-50 md:ml-0">
-            {"Jagrut" + " " + "Sharma"}
-            <span className="text-[small]">{`test@123`}</span>
+            {`${user?.firstName} ${user?.lastName}`}
+            <span className="text-[small]">{`@${user.username}`}</span>
           </p>
         </div>
 
@@ -50,14 +55,14 @@ export default function ProfileDescription() {
         </div>
       </div>
 
-      <p className="mt-4 dark:text-gray-50 ">This is a demo bio</p>
+      <p className="mt-4 dark:text-gray-50 ">{user.bio}</p>
       <div className="mt-2 hover:underline dark:text-gray-50 ">
         <a
           href="https://jagrut-sharma.netlify.app/"
           target="_blank"
           rel="noreferrer"
         >
-          https://jagrut-sharma.netlify.app/
+          {user.link}
         </a>
       </div>
     </div>

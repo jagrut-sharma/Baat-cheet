@@ -5,9 +5,15 @@ import NavSideBar from "../components/NavSideBar";
 import RightSideBar from "../components/RightSideBar";
 import { Outlet } from "react-router-dom";
 import AutoScroll from "../components/AutoScroll";
+import { useAuth } from "../context/AuthContext";
 
 export default function RootLayout() {
   const [theme, setTheme] = useState(localStorage.getItem("theme"));
+  const { setHasLoggedOut } = useAuth();
+
+  useEffect(() => {
+    setHasLoggedOut(false);
+  }, []);
 
   //onMount theme check
   useEffect(() => {

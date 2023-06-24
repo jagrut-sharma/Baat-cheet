@@ -13,6 +13,7 @@ export const AuthProvider = function ({ children }) {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [user, setUser] = useImmer(JSON.parse(localStorage.getItem("user")));
   const [authLoader, setAuthLoader] = useState(false);
+  const [hasLoggedOut, setHasLoggedOut] = useState(false);
 
   const authContext = {
     token,
@@ -21,6 +22,8 @@ export const AuthProvider = function ({ children }) {
     setUser,
     authLoader,
     setAuthLoader,
+    hasLoggedOut,
+    setHasLoggedOut,
   };
 
   return (

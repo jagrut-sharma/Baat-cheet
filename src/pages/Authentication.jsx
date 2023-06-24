@@ -17,7 +17,8 @@ export default function Authentication() {
     register: false,
   });
 
-  const { token, setAuthLoader, authLoader, setToken, setUser } = useAuth();
+  const { token, setAuthLoader, authLoader, setToken, setUser, hasLoggedOut } =
+    useAuth();
   // const navigate = useNavigate();
   const location = useLocation();
 
@@ -25,6 +26,9 @@ export default function Authentication() {
   const baseURL = `https://baatcheet-backend.vercel.app/api/auth/${mode}`;
 
   const redirectPath = location.state?.path || "/";
+  // console.log(hasLoggedOut);
+  const newRedirect = hasLoggedOut ? "/" : redirectPath;
+  // console.log(newRedirect);
 
   //onMount theme check
   useEffect(() => {
@@ -74,7 +78,7 @@ export default function Authentication() {
   return (
     <>
       {token ? (
-        <Navigate to={redirectPath} />
+        <Navigate to={newRedirect} />
       ) : (
         <div className="grid min-h-[100dvh] grid-rows-rootLayout bg-gray-200 font-OpenSans dark:bg-gray-800">
           <Nav theme={theme} setTheme={setTheme} login />

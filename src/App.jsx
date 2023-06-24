@@ -54,7 +54,11 @@ function App() {
   return (
     <>
       <RouterProvider router={router} />
-      <ToastContainer transition={Slide} className={"font-Poppins font-bold"} />
+      <ToastContainer
+        transition={Slide}
+        pauseOnFocusLoss={false}
+        className={"font-Poppins font-bold"}
+      />
     </>
   );
 }
