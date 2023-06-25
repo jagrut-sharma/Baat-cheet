@@ -9,10 +9,10 @@ import {
 import AvatarEle from "./AvatarEle";
 import { useData } from "../context/DataContext";
 import { useAuth } from "../context/AuthContext";
-import { createNewPost } from "../services/postServices";
+import { createNewPost, editPost } from "../services/postServices";
 
-export default function Modal({ isOpen, setIsOpen, isEditing, content }) {
-  const [post, setPost] = useState(isEditing ? content : "");
+export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
+  const [post, setPost] = useState(contents?.content || "");
   const { dataDispatch } = useData();
   const { token, user } = useAuth();
 
@@ -26,12 +26,25 @@ export default function Modal({ isOpen, setIsOpen, isEditing, content }) {
     closeModal();
   };
 
+  const handleEditPost = async (e) => {
+    e.preventDefault();
+    console.log("Editing");
+    const postID = contents._id;
+    const postDetails = {
+      content: post,
+    };
+    const newContent = { ...contents, content: post };
+    await editPost(token, dataDispatch, postDetails, postID, newContent);
+    setPost(post);
+    setIsOpen(false);
+  };
+
   const handleChange = (e) => {
     setPost(e.target.value);
   };
 
   function closeModal() {
-    setPost("");
+    setPost(contents?.content || "");
     setIsOpen(false);
   }
 
@@ -39,29 +52,32 @@ export default function Modal({ isOpen, setIsOpen, isEditing, content }) {
     setIsOpen(true);
   }
 
+  // console.log(contents);
+
   return (
     <>
-      <div className=" h-full w-[3rem] self-center md:order-1 md:h-max md:self-start">
-        <button
-          type="button"
-          onClick={openModal}
-          className={
-            "flex h-full w-[3rem] items-center justify-center rounded-md px-2 py-1 text-base font-bold md:w-max md:hover:bg-blue-200 md:dark:hover:bg-slate-500"
-          }
-        >
-          {isEditing ? (
-            ""
-          ) : (
-            <>
-              {" "}
-              <BsFillPlusCircleFill
-                size={"1.1rem"}
-                className="text-blue-700 dark:text-blue-500 md:mr-2"
-              />{" "}
-              <span className="hidden md:block">Create Post</span>
-            </>
-          )}
-        </button>
+      <div
+        className={`h-full w-[3rem] self-center md:order-1 md:h-max ${
+          isEditing ? "md:w-full" : ""
+        } md:self-start`}
+      >
+        {isEditing ? (
+          ""
+        ) : (
+          <button
+            type="button"
+            onClick={openModal}
+            className={
+              "flex h-full w-[3rem] items-center justify-center rounded-md px-2 py-1 text-base font-bold md:w-max md:hover:bg-blue-200 md:dark:hover:bg-slate-500"
+            }
+          >
+            <BsFillPlusCircleFill
+              size={"1.1rem"}
+              className="text-blue-700 dark:text-blue-500 md:mr-2"
+            />
+            <span className="hidden md:block">Create Post</span>
+          </button>
+        )}
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -142,10 +158,10 @@ export default function Modal({ isOpen, setIsOpen, isEditing, content }) {
                           </button>
                         </div>
                         <button
-                          onClick={handleNewPost}
+                          onClick={contents ? handleEditPost : handleNewPost}
                           className="m-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
                         >
-                          Post
+                          {contents ? "Save" : "Post"}
                         </button>
                       </div>
                     </form>

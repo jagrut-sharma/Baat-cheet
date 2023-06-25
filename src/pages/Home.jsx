@@ -18,8 +18,14 @@ export default function Home() {
     setCurrCategory(e.target.name);
   };
 
-  // console.log(currCategory);
-  console.log(dataState.allPosts);
+  const followingPeoplesID = user.following.map(({ _id }) => _id);
+  followingPeoplesID.push(user._id);
+
+  const homePagePosts = dataState.allPosts.filter(({ author }) =>
+    followingPeoplesID.includes(author._id)
+  );
+
+  // console.log(dataState.allPosts);
 
   let postCategory = ["Recent", "Trending"];
 
@@ -52,7 +58,7 @@ export default function Home() {
 
         <NewPost user={user} token={token} dataDispatch={dataDispatch} />
 
-        {dataState.allPosts.map((post) => (
+        {homePagePosts.map((post) => (
           <Post key={post._id} post={post} />
         ))}
       </div>

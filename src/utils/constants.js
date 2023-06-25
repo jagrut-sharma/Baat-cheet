@@ -1,6 +1,8 @@
 export const ACTIONS = {
   FETCH_ALL_USERS: "FETCH ALL USERS",
   FETCH_ALL_POSTS: "FETCH ALL POSTS",
+  EDIT_POST: "EDIT POST",
+  DELETE_POST: "DELETE POST",
 };
 
 export const guestUser = {

@@ -1,19 +1,35 @@
+/* eslint-disable react/prop-types */
 import { Menu, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { CiMenuKebab } from "react-icons/ci";
+import Modal from "./Modal";
+import { deletePost } from "../services/postServices";
+import { useAuth } from "../context/AuthContext";
+import { useData } from "../context/DataContext";
 
-export default function Dropdown() {
+export default function Dropdown({ post }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const { token } = useAuth();
+  const { dataDispatch } = useData();
+
+  const handleDelete = async (e) => {
+    e.preventDefault;
+    console.log("Deleting");
+    const postID = post._id;
+    await deletePost(token, dataDispatch, postID);
+  };
+
   return (
     <div className="ml-auto self-center text-right">
       <Menu as="div" className="relative inline-block text-left">
         <div>
           <Menu.Button className="inline-flex w-full justify-center rounded-md text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
-            <span className="rounded-full p-2 hover:bg-blue-100 dark:hover:bg-gray-600">
+            <div className="rounded-full p-2 hover:bg-blue-100 dark:hover:bg-gray-600">
               <CiMenuKebab
                 className="h-5 w-5 fill-black dark:fill-slate-50"
                 aria-hidden="true"
               />
-            </span>
+            </div>
           </Menu.Button>
         </div>
         <Transition
@@ -27,9 +43,13 @@ export default function Dropdown() {
         >
           <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="px-1 py-1 ">
-              <Menu.Item>
+              <Menu.Item
+                onClick={() => {
+                  setIsOpen(true);
+                }}
+              >
                 {({ active }) => (
-                  <button
+                  <span
                     className={`${
                       active ? "bg-blue-600 text-white" : "text-gray-900"
                     } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
@@ -46,7 +66,7 @@ export default function Dropdown() {
                       />
                     )}
                     Edit
-                  </button>
+                  </span>
                 )}
               </Menu.Item>
             </div>
@@ -55,6 +75,7 @@ export default function Dropdown() {
               <Menu.Item>
                 {({ active }) => (
                   <button
+                    onClick={handleDelete}
                     className={`${
                       active ? "bg-blue-600 text-white" : "text-gray-900"
                     } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
@@ -78,6 +99,7 @@ export default function Dropdown() {
           </Menu.Items>
         </Transition>
       </Menu>
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen} isEditing contents={post} />
     </div>
   );
 }

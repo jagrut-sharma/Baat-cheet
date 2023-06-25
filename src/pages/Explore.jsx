@@ -12,6 +12,7 @@ export default function Explore() {
   const {
     dataState: { allPosts },
   } = useData();
+
   const [currCategory, setCurrCategory] = useState("Recent");
 
   let postCategory = ["Recent", "Trending"];

@@ -44,3 +44,51 @@ export const createNewPost = async (token, dispatch, post) => {
     console.log(`${err.response.status}:${errRes} ${errMsg}`);
   }
 };
+
+export const editPost = async (
+  token,
+  dataDispatch,
+  postDetails,
+  postID,
+  post
+) => {
+  try {
+    await axios.patch(
+      `https://baatcheet-backend.vercel.app/api/post/${postID}`,
+      postDetails,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    dataDispatch({ type: ACTIONS.EDIT_POST, payload: post });
+  } catch (err) {
+    console.log(err);
+    const errRes = err?.response?.data?.message ?? "";
+    const errMsg = err?.response?.data?.error ?? "";
+    console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
+  }
+};
+
+export const deletePost = async (token, dataDispatch, postID) => {
+  try {
+    const res = await axios.delete(
+      `https://baatcheet-backend.vercel.app/api/post/${postID}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    console.log(res);
+
+    dataDispatch({ type: ACTIONS.DELETE_POST, payload: postID });
+  } catch (err) {
+    console.log(err);
+    const errRes = err?.response?.data?.message ?? "";
+    const errMsg = err?.response?.data?.error ?? "";
+    console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
+  }
+};

@@ -6,9 +6,12 @@ import { FaRegComment } from "react-icons/fa";
 import AvatarEle from "./AvatarEle";
 import Dropdown from "./Dropdown";
 import { getHumanizeTimeForOlderPost } from "../utils/helperFunctions";
+import { useAuth } from "../context/AuthContext";
 // import { getHumanizeTimeForOlderPost } from "../utils/helperFunctions";
 
 export default function Post({ post }) {
+  const { user } = useAuth();
+
   return (
     <div className="mb-4 w-[100%] rounded-md border border-gray-200 bg-white pb-2 shadow-md dark:border-gray-600 dark:bg-gray-700">
       <div className="mt-1 flex justify-start gap-2 px-4 pt-2.5 text-[1rem] leading-[18px] text-black dark:border-t-gray-600 dark:text-slate-50 md:gap-4">
@@ -44,7 +47,7 @@ export default function Post({ post }) {
           </span>
         </div>
 
-        <Dropdown />
+        {user._id === post.author._id && <Dropdown post={post} />}
       </div>
 
       <span className="visible self-center px-4 text-[small] text-gray-400 md:hidden">
