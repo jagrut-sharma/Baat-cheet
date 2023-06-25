@@ -11,8 +11,8 @@ import { useData } from "../context/DataContext";
 import { useAuth } from "../context/AuthContext";
 import { createNewPost } from "../services/postServices";
 
-export default function Modal({ isOpen, setIsOpen, isEditing }) {
-  const [post, setPost] = useState("");
+export default function Modal({ isOpen, setIsOpen, isEditing, content }) {
+  const [post, setPost] = useState(isEditing ? content : "");
   const { dataDispatch } = useData();
   const { token, user } = useAuth();
 

@@ -20,6 +20,7 @@ export default function ProfileDescription() {
             imgLink={user?.pic}
             firstName={user?.firstName}
             lastName={user?.lastName}
+            isProfile
           />
 
           <p className="item ml-2 flex flex-col justify-center gap-1 dark:text-gray-50 md:ml-0">

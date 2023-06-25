@@ -4,7 +4,7 @@ import AvatarEle from "./AvatarEle";
 import Dropdown from "./Dropdown";
 import { FaRegComment } from "react-icons/fa";
 
-export default function SamplePost() {
+export default function SamplePost({ post }) {
   return (
     <div className="mb-4 w-[100%] rounded-md border border-gray-200 bg-white pb-2 shadow-md dark:border-gray-600 dark:bg-gray-700">
       <div className="mt-1 flex justify-start gap-2 px-4 pt-2.5 text-[1rem] leading-[18px] text-black dark:text-slate-50 md:gap-4">
@@ -16,13 +16,6 @@ export default function SamplePost() {
             <span className="text-[small]">{`test@123`}</span>
           </div>
         </div>
-        {/* <p>
-      {new Intl.DateTimeFormat("en-IN", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(Date.UTC(2020, 11, 20, 3, 23, 16, 738)))}
-    </p> */}
 
         <div className="mt-[2.5px] hidden md:block">
           <span className="text-[small] text-gray-400">18 June, 2023</span>

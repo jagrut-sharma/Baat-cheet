@@ -1,9 +1,6 @@
 import { Tab } from "@headlessui/react";
 import { useState } from "react";
 import Post from "../components/Post";
-import SamplePost from "../components/SamplePost";
-// import AvatarEle from "../components/AvatarEle";
-// import { BsFillEmojiHeartEyesFill, BsFillImageFill } from "react-icons/bs";
 import NewPost from "../components/NewPost";
 import { useAuth } from "../context/AuthContext";
 import { useData } from "../context/DataContext";
@@ -55,16 +52,9 @@ export default function Home() {
 
         <NewPost user={user} token={token} dataDispatch={dataDispatch} />
 
-        <Post />
-        <SamplePost />
-        <Post />
-        <SamplePost />
-        <Post />
-        <SamplePost />
-        <Post />
-        <SamplePost />
-        <Post />
-        <SamplePost />
+        {dataState.allPosts.map((post) => (
+          <Post key={post._id} post={post} />
+        ))}
       </div>
     </main>
   );

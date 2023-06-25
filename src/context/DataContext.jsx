@@ -10,6 +10,8 @@ import { getAllPosts } from "../services/postServices";
 const DataContext = createContext({
   dataState: {},
   dataDispatch: () => {},
+  dataLoader: null,
+  setDataLoader: () => {},
 });
 
 export const DataProvider = ({ children }) => {

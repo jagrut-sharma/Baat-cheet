@@ -1,20 +1,33 @@
+/* eslint-disable react/prop-types */
 import * as Separator from "@radix-ui/react-separator";
 import { BsBookmark, BsHeart } from "react-icons/bs";
 import { FaRegComment } from "react-icons/fa";
 
 import AvatarEle from "./AvatarEle";
 import Dropdown from "./Dropdown";
+import { getHumanizeTimeForOlderPost } from "../utils/helperFunctions";
+// import { getHumanizeTimeForOlderPost } from "../utils/helperFunctions";
 
-export default function Post() {
+export default function Post({ post }) {
   return (
     <div className="mb-4 w-[100%] rounded-md border border-gray-200 bg-white pb-2 shadow-md dark:border-gray-600 dark:bg-gray-700">
       <div className="mt-1 flex justify-start gap-2 px-4 pt-2.5 text-[1rem] leading-[18px] text-black dark:border-t-gray-600 dark:text-slate-50 md:gap-4">
         <div className="flex">
-          <AvatarEle imgLink={""} firstName={"jagrut"} lastName={"sharma"} />
+          <AvatarEle
+            imgLink={post.author.pic}
+            firstName={post.author.firstName}
+            lastName={post.author.lastName}
+          />
 
           <div className="item ml-2 flex flex-col justify-center gap-1 md:ml-0">
-            {"Jagrut" + " " + "Sharma"}
-            <span className="text-[small]">{`test@123`}</span>
+            {`${
+              post.author.firstName[0].toUpperCase() +
+              post.author.firstName.slice(1)
+            } ${
+              post.author.lastName[0].toUpperCase() +
+              post.author.lastName.slice(1)
+            }`}
+            <span className="text-[small]">{`@${post.author.username}`}</span>
           </div>
         </div>
         {/* <p>
@@ -26,29 +39,31 @@ export default function Post() {
     </p> */}
 
         <div className="mt-[2.5px] hidden md:block">
-          <span className="text-[small] text-gray-400">18 June, 2023</span>
+          <span className="text-[small] text-gray-400">
+            {getHumanizeTimeForOlderPost(new Date(), post.createdAt)}
+          </span>
         </div>
 
         <Dropdown />
       </div>
 
       <span className="visible self-center px-4 text-[small] text-gray-400 md:hidden">
-        18 June, 2023
+        {getHumanizeTimeForOlderPost(new Date(), post.createdAt)}
       </span>
 
       <p className="mt-2 px-4 pb-2 text-base dark:text-slate-50">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae est
-        laudantium deserunt repellendus aspernatur eaque ab, soluta, quisquam
-        nostrum, blanditiis dolorum ipsam vero doloribus doloremque?
+        {post.content}
       </p>
 
-      <div className="mb-4 flex justify-center">
-        <img
-          src="https://res.cloudinary.com/dtrjdcrme/image/upload/v1647014336/ecommerce/chocolatecake4.webp"
-          alt="post image"
-          className="w-full object-cover px-4"
-        />
-      </div>
+      {post.imgURL && (
+        <div className="mb-4 flex justify-center">
+          <img
+            src={post.imgURL}
+            alt={`${post.author._id}'s image`}
+            className="w-full object-cover px-4"
+          />
+        </div>
+      )}
 
       <Separator.Root className="self-start bg-gray-300 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-[100%] data-[orientation=vertical]:w-px dark:bg-gray-500" />
 

@@ -2,11 +2,17 @@
 import * as Avatar from "@radix-ui/react-avatar";
 
 // eslint-disable-next-line react/prop-types
-export default function AvatarEle({ imgLink, firstName, lastName }) {
+export default function AvatarEle({ imgLink, firstName, lastName, isProfile }) {
   return (
-    <Avatar.Root className=" inline-flex h-[2.5rem] w-[2.5rem] select-none items-center justify-center overflow-hidden rounded-full align-middle md:mr-2 md:h-[45px] md:w-[45px]">
+    <Avatar.Root
+      className={`inline-flex h-[2.5rem] w-[2.5rem] select-none items-center justify-center overflow-hidden rounded-full align-middle md:mr-2  ${
+        isProfile ? "md:h-[55px] md:w-[55px]" : "md:h-[45px] md:w-[45px]"
+      }`}
+    >
       <Avatar.Image
-        className="border-1 h-10 w-10 rounded-full border border-gray-800 object-cover"
+        className={`border-1 ${
+          isProfile ? "h-13 w-13" : "h-10 w-10"
+        } rounded-full border border-gray-800 object-cover`}
         src={imgLink}
         alt={`${firstName} ${lastName}`}
       />

@@ -27,8 +27,8 @@ export default function NavSideBar() {
 
   const getUserClass = ({ isActive }) => {
     return isActive
-      ? "order-2 flex w-max items-center border-gray-300 px-2 py-2 text-base font-bold hover:bg-blue-200 dark:border-gray-600 dark:hover:bg-slate-500 md:mb-4 md:mt-auto md:rounded-md md:border bg-blue-200 dark:bg-slate-600"
-      : "order-2 flex w-max items-center border-gray-300 px-2 py-2 text-base font-bold hover:bg-blue-300 dark:border-gray-600 dark:hover:bg-slate-500 md:mb-4 md:mt-auto md:rounded-md md:border";
+      ? "order-2 flex w-max items-center border-gray-300 px-2 py-2 text-base font-bold hover:bg-blue-200 dark:border-gray-600 dark:hover:bg-slate-500 md:mb-4 md:mt-auto md:rounded-md md:border bg-blue-200 dark:bg-slate-600 self-center"
+      : "order-2 flex w-max items-center border-gray-300 px-2 py-2 text-base font-bold hover:bg-blue-300 dark:border-gray-600 dark:hover:bg-slate-500 md:mb-4 md:mt-auto md:rounded-md md:border self-center";
   };
 
   return (

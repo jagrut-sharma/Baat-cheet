@@ -3,10 +3,14 @@ import { createContext, useContext, useState } from "react";
 import { useImmer } from "use-immer";
 
 const AuthContext = createContext({
-  userData: {},
-  handleLogin: () => {},
-  handleLogout: () => {},
   token: null,
+  setToken: () => {},
+  user: {},
+  setUser: () => {},
+  authLoader: null,
+  setAuthLoader: () => {},
+  hasLoggedOut: null,
+  setHasLoggedOut: () => {},
 });
 
 export const AuthProvider = function ({ children }) {
