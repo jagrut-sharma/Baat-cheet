@@ -1,15 +1,37 @@
 /* eslint-disable react/prop-types */
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import {
   BsFillEmojiHeartEyesFill,
   BsFillImageFill,
   BsFillPlusCircleFill,
 } from "react-icons/bs";
 import AvatarEle from "./AvatarEle";
+import { useData } from "../context/DataContext";
+import { useAuth } from "../context/AuthContext";
+import { createNewPost } from "../services/postServices";
 
-export default function Modal({ isOpen, setIsOpen }) {
+export default function Modal({ isOpen, setIsOpen, isEditing }) {
+  const [post, setPost] = useState("");
+  const { dataDispatch } = useData();
+  const { token, user } = useAuth();
+
+  const handleNewPost = (e) => {
+    e.preventDefault();
+    const postDetails = {
+      content: post,
+    };
+    createNewPost(token, dataDispatch, postDetails);
+    setPost("");
+    closeModal();
+  };
+
+  const handleChange = (e) => {
+    setPost(e.target.value);
+  };
+
   function closeModal() {
+    setPost("");
     setIsOpen(false);
   }
 
@@ -27,11 +49,18 @@ export default function Modal({ isOpen, setIsOpen }) {
             "flex h-full w-[3rem] items-center justify-center rounded-md px-2 py-1 text-base font-bold md:w-max md:hover:bg-blue-200 md:dark:hover:bg-slate-500"
           }
         >
-          <BsFillPlusCircleFill
-            size={"1.1rem"}
-            className="text-blue-700 dark:text-blue-500 md:mr-2"
-          />{" "}
-          <span className="hidden md:block">Create Post</span>
+          {isEditing ? (
+            ""
+          ) : (
+            <>
+              {" "}
+              <BsFillPlusCircleFill
+                size={"1.1rem"}
+                className="text-blue-700 dark:text-blue-500 md:mr-2"
+              />{" "}
+              <span className="hidden md:block">Create Post</span>
+            </>
+          )}
         </button>
       </div>
 
@@ -72,16 +101,16 @@ export default function Modal({ isOpen, setIsOpen }) {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 dark:text-slate-50"
                   >
-                    New Post
+                    {isEditing ? "Edit Post" : "New Post"}
                   </Dialog.Title>
                   <div className="mt-4">
                     <form className="mb-4 rounded-md border border-gray-300 bg-gray-50 shadow-md dark:border-gray-600 dark:bg-gray-600">
                       <div className="flex border-b border-b-gray-300 dark:border-b-gray-500">
                         <div className="m-2">
                           <AvatarEle
-                            imgLink=""
-                            firstName={"jagrut"}
-                            lastName={"sharma"}
+                            imgLink={user?.pic}
+                            firstName={user?.firstName}
+                            lastName={user?.lastName}
                           />
                         </div>
 
@@ -92,6 +121,8 @@ export default function Modal({ isOpen, setIsOpen }) {
                           cols="30"
                           rows="8"
                           className="w-full resize-none bg-gray-50 p-3 font-OpenSans outline-none dark:bg-gray-600 dark:text-slate-50"
+                          value={post}
+                          onChange={handleChange}
                         ></textarea>
                       </div>
 
@@ -111,10 +142,7 @@ export default function Modal({ isOpen, setIsOpen }) {
                           </button>
                         </div>
                         <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            closeModal();
-                          }}
+                          onClick={handleNewPost}
                           className="m-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
                         >
                           Post

@@ -22,7 +22,7 @@ export default function Home() {
   };
 
   // console.log(currCategory);
-  // console.log(dataState.allPosts);
+  console.log(dataState.allPosts);
 
   let postCategory = ["Recent", "Trending"];
 
