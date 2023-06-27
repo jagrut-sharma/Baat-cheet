@@ -2,6 +2,7 @@ import * as ScrollArea from "@radix-ui/react-scroll-area";
 import AvatarEle from "./AvatarEle";
 import { useData } from "../context/DataContext";
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 export default function RightSideBar() {
   const {
@@ -18,6 +19,11 @@ export default function RightSideBar() {
     ({ _id }) => !followingIDArr.includes(_id) && _id !== userID
   );
 
+  const handleFollow = (e) => {
+    e.preventDefault();
+    console.log("Followed");
+  };
+
   return (
     <div className="hidden border-l border-gray-300 dark:border-gray-600 lg:fixed lg:bottom-0 lg:right-0 lg:top-[69px] lg:block lg:w-[18rem]">
       <aside className="hidden flex-col px-4 lg:flex">
@@ -28,24 +34,30 @@ export default function RightSideBar() {
                 Suggestions
               </div>
               {suggestedUsers.map((user) => (
-                <div
-                  className="mt-2.5 flex border-b border-b-gray-300 px-5 pt-2.5 text-[1rem] leading-[18px] text-black dark:border-b-gray-600 dark:text-slate-50"
-                  key={user._id}
-                >
-                  <AvatarEle
-                    imgLink={user?.pic}
-                    firstName={user?.firstName}
-                    lastName={user?.lastName}
-                  />
+                <Link key={user._id} to={`/profile/${user._id}`}>
+                  <div
+                    className="mt-2.5 flex border-b border-b-gray-300 px-5 pt-2.5 text-[1rem] leading-[18px] text-black dark:border-b-gray-600 dark:text-slate-50"
+                    key={user._id}
+                  >
+                    <AvatarEle
+                      imgLink={user?.pic}
+                      firstName={user?.firstName}
+                      lastName={user?.lastName}
+                    />
 
-                  <div className="item flex flex-col justify-center gap-1">
-                    {user?.firstName + " " + user?.lastName}
-                    <span className="text-[small]">{`@${user.username}`}</span>
-                    <button className="mb-2 mt-1 w-[5.6rem] rounded-lg bg-blue-600 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80">
-                      Follow
-                    </button>
+                    <div className="item flex flex-col justify-center gap-1">
+                      <span>{user?.firstName + " " + user?.lastName}</span>
+                      <span className="text-[small]">{`@${user.username}`}</span>
+
+                      <button
+                        className="mb-2 mt-1 w-[5.6rem] rounded-lg bg-blue-600 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
+                        onClick={handleFollow}
+                      >
+                        Follow
+                      </button>
+                    </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </ScrollArea.Viewport>

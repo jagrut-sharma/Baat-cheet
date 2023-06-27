@@ -12,6 +12,8 @@ import Profile from "./pages/Profile";
 import Liked from "./pages/Liked";
 import Authentication from "./pages/Authentication";
 import RequireAuth from "./components/RequireAuth";
+import ProfileRootLayout from "./pages/ProfileRootLayout";
+import GuestProfile from "./pages/GuestProfile";
 
 const router = createBrowserRouter([
   {
@@ -40,7 +42,17 @@ const router = createBrowserRouter([
       },
       {
         path: "/profile",
-        element: <Profile />,
+        element: <ProfileRootLayout />,
+        children: [
+          {
+            index: true,
+            element: <Profile />,
+          },
+          {
+            path: ":userID",
+            element: <GuestProfile />,
+          },
+        ],
       },
     ],
   },

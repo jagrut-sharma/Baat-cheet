@@ -1,11 +1,12 @@
+/* eslint-disable react/prop-types */
 import { BiLogOut } from "react-icons/bi";
 import AvatarEle from "./AvatarEle";
 import EditProfileModal from "./EditProfileModal";
 import { useAuth } from "../context/AuthContext";
 import { logoutHandler } from "../services/authServices";
 
-export default function ProfileDescription() {
-  const { setToken, setUser, user, setHasLoggedOut } = useAuth();
+export default function ProfileDescription({ user }) {
+  const { setToken, setUser, setHasLoggedOut, user: loggedUser } = useAuth();
 
   const handleLogout = () => {
     setHasLoggedOut(true);
@@ -29,31 +30,37 @@ export default function ProfileDescription() {
           </p>
         </div>
 
-        <div className="flex md:hidden">
-          <EditProfileModal />
-          <button
-            className="mx-2 rounded-md bg-blue-600 p-2 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
-            onClick={handleLogout}
-          >
-            <BiLogOut />
-          </button>
-        </div>
+        {user._id === loggedUser._id && (
+          <div className="flex md:hidden">
+            <EditProfileModal />
+            <button
+              className="mx-2 rounded-md bg-blue-600 p-2 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
+              onClick={handleLogout}
+            >
+              <BiLogOut />
+            </button>
+          </div>
+        )}
 
-        {/* <div>
-      <button className="mx-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80">
-        Follow
-      </button>
-    </div> */}
+        {user._id === loggedUser._id && (
+          <div className="hidden md:flex">
+            <EditProfileModal />
+            <button
+              className="mx-2 rounded-xl bg-blue-600 p-2 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </div>
+        )}
 
-        <div className="hidden md:flex">
-          <EditProfileModal />
-          <button
-            className="mx-2 rounded-xl bg-blue-600 p-2 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
-        </div>
+        {user._id !== loggedUser._id && (
+          <div>
+            <button className="mx-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80">
+              Follow
+            </button>
+          </div>
+        )}
       </div>
 
       <p className="mt-4 dark:text-gray-50 ">{user.bio}</p>

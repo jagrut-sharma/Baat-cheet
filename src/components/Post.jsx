@@ -7,6 +7,7 @@ import AvatarEle from "./AvatarEle";
 import Dropdown from "./Dropdown";
 import { getHumanizeTimeForOlderPost } from "../utils/helperFunctions";
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 // import { getHumanizeTimeForOlderPost } from "../utils/helperFunctions";
 
 export default function Post({ post }) {
@@ -15,7 +16,8 @@ export default function Post({ post }) {
   return (
     <div className="mb-4 w-[100%] rounded-md border border-gray-200 bg-white pb-2 shadow-md dark:border-gray-600 dark:bg-gray-700">
       <div className="mt-1 flex justify-start gap-2 px-4 pt-2.5 text-[1rem] leading-[18px] text-black dark:border-t-gray-600 dark:text-slate-50 md:gap-4">
-        <div className="flex">
+        {/* <div> */}
+        <Link to={`/profile/${post.author._id}`} className="flex">
           <AvatarEle
             imgLink={post.author.pic}
             firstName={post.author.firstName}
@@ -32,14 +34,8 @@ export default function Post({ post }) {
             }`}
             <span className="text-[small]">{`@${post.author.username}`}</span>
           </div>
-        </div>
-        {/* <p>
-      {new Intl.DateTimeFormat("en-IN", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(Date.UTC(2020, 11, 20, 3, 23, 16, 738)))}
-    </p> */}
+        </Link>
+        {/* </div> */}
 
         <div className="mt-[2.5px] hidden md:block">
           <span className="text-[small] text-gray-400">

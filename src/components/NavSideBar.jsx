@@ -76,7 +76,7 @@ export default function NavSideBar() {
 
         <Modal isOpen={isOpen} setIsOpen={setIsOpen} />
 
-        <NavLink to={"/profile"} className={getUserClass}>
+        <NavLink to={`/profile/${user._id}`} className={getUserClass}>
           <div className="flex text-[1rem] leading-[18px] text-black dark:border-t-gray-600 dark:text-slate-50">
             <AvatarEle
               imgLink={user?.pic}

@@ -92,3 +92,39 @@ export const deletePost = async (token, dataDispatch, postID) => {
     console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
   }
 };
+
+export const getSingleUserPosts = async (
+  token,
+  userID,
+  dispatch,
+  setProfileLoader,
+  isUser
+) => {
+  try {
+    setProfileLoader(true);
+    const res = await axios.get(
+      `https://baatcheet-backend.vercel.app/api/user/all-posts/${userID}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    setProfileLoader(false);
+    const {
+      data: { posts },
+    } = res;
+
+    dispatch({
+      type: isUser ? ACTIONS.FETCH_USER_POSTS : ACTIONS.FETCH_PROFILE_POST,
+      payload: posts,
+    });
+  } catch (err) {
+    setProfileLoader(false);
+    console.log(err);
+    const errRes = err?.response?.data?.message ?? "";
+    const errMsg = err?.response?.data?.error ?? "";
+    console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
+  }
+};

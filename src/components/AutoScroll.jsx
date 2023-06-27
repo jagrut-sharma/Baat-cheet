@@ -6,6 +6,6 @@ export default function AutoScroll() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [location]);
+  }, [location.pathname]);
   return null;
 }

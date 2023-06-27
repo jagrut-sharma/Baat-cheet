@@ -11,13 +11,13 @@ export default function AvatarEle({ imgLink, firstName, lastName, isProfile }) {
     >
       <Avatar.Image
         className={`border-1 ${
-          isProfile ? "h-13 w-13" : "h-10 w-10"
+          isProfile ? "h-full w-full" : "h-10 w-10"
         } rounded-full border border-gray-800 object-cover`}
         src={imgLink}
         alt={`${firstName} ${lastName}`}
       />
       <Avatar.Fallback
-        className="text-violet11 leading-1 flex h-full w-full items-center justify-center bg-orange-100 text-[15px] font-medium dark:text-black"
+        className="leading-1 flex h-full w-full items-center justify-center bg-orange-100 text-[15px] font-medium text-black dark:text-black"
         delayMs={500}
       >
         {firstName[0].toUpperCase() + lastName[0].toUpperCase()}
