@@ -14,6 +14,9 @@ import Authentication from "./pages/Authentication";
 import RequireAuth from "./components/RequireAuth";
 import ProfileRootLayout from "./pages/ProfileRootLayout";
 import GuestProfile from "./pages/GuestProfile";
+import ErrorPage from "./pages/ErrorPage";
+
+// Add Error element
 
 const router = createBrowserRouter([
   {
@@ -23,6 +26,7 @@ const router = createBrowserRouter([
         <RootLayout />
       </RequireAuth>
     ),
+    // errorElement: <ErrorPage />,
     children: [
       {
         index: true,
