@@ -6,6 +6,7 @@ export const initialData = {
   profilePosts: [],
   userPosts: [],
   profileDetails: null,
+  likedPosts: [],
 };
 
 export const dataReducer = (draft, action) => {
@@ -49,6 +50,16 @@ export const dataReducer = (draft, action) => {
 
     case ACTIONS.FETCH_PROFILE_DETAILS: {
       draft.profileDetails = action.payload;
+      break;
+    }
+
+    case ACTIONS.ADD_LIKED_POST: {
+      draft.likedPosts = action.payload;
+      break;
+    }
+
+    case ACTIONS.LIKE_POST: {
+      draft.likedPosts.push(action.payload);
       break;
     }
 

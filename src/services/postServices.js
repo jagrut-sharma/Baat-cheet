@@ -1,8 +1,11 @@
 import axios from "axios";
 import { ACTIONS } from "../utils/constants";
 
-export const getAllPosts = async (token, dataDispatch) => {
+export const getAllPosts = async (token, dataDispatch, user, setLoader) => {
   try {
+    if (setLoader) {
+      setLoader(true);
+    }
     const res = await axios.get(
       "https://baatcheet-backend.vercel.app/api/post",
       {
@@ -16,27 +19,25 @@ export const getAllPosts = async (token, dataDispatch) => {
       data: { posts },
     } = res;
 
+    if (setLoader) {
+      setLoader(false);
+    }
     dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: posts });
+    getLikedPosts(posts, dataDispatch, user);
   } catch (err) {
     console.log(err);
   }
 };
 
-export const createNewPost = async (token, dispatch, post) => {
+export const createNewPost = async (token, dispatch, post, user) => {
   try {
-    const res = await axios.post(
-      "https://baatcheet-backend.vercel.app/api/post",
-      post,
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+    await axios.post("https://baatcheet-backend.vercel.app/api/post", post, {
+      headers: {
+        Authorization: token,
+      },
+    });
 
-    console.log(res ? "" : "");
-
-    getAllPosts(token, dispatch);
+    getAllPosts(token, dispatch, user);
   } catch (err) {
     console.log(err);
     const errRes = err?.response?.data?.message ?? "";
@@ -122,6 +123,78 @@ export const getSingleUserPosts = async (
     });
   } catch (err) {
     setProfileLoader(false);
+    console.log(err);
+    const errRes = err?.response?.data?.message ?? "";
+    const errMsg = err?.response?.data?.error ?? "";
+    console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
+  }
+};
+
+const getLikedPosts = (allPosts, dispatch, user) => {
+  const userID = user._id;
+  const likedPosts = allPosts.filter((post) =>
+    post.likes.likedBy.includes(userID)
+  );
+  dispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+};
+
+export const likePost = async (
+  token,
+  postID,
+  setPostLoader,
+  user,
+  dispatch
+) => {
+  try {
+    setPostLoader(true);
+    await axios.post(
+      "https://baatcheet-backend.vercel.app/api/post/like",
+      {
+        postId: postID,
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    setPostLoader(false);
+    getAllPosts(token, dispatch, user, setPostLoader);
+  } catch (err) {
+    setPostLoader(false);
+    console.log(err);
+    const errRes = err?.response?.data?.message ?? "";
+    const errMsg = err?.response?.data?.error ?? "";
+    console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
+  }
+};
+
+export const dislikePost = async (
+  token,
+  postID,
+  setPostLoader,
+  user,
+  dispatch
+) => {
+  try {
+    setPostLoader(true);
+    await axios.post(
+      "https://baatcheet-backend.vercel.app/api/post/dislike",
+      {
+        postId: postID,
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    setPostLoader(false);
+    getAllPosts(token, dispatch, user, setPostLoader);
+  } catch (err) {
+    setPostLoader(false);
     console.log(err);
     const errRes = err?.response?.data?.message ?? "";
     const errMsg = err?.response?.data?.error ?? "";

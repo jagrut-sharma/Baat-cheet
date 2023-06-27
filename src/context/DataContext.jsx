@@ -17,12 +17,12 @@ const DataContext = createContext({
 export const DataProvider = ({ children }) => {
   const [dataState, dataDispatch] = useImmerReducer(dataReducer, initialData);
   const [dataLoader, setDataLoader] = useState(false);
-  const { token } = useAuth();
+  const { token, user } = useAuth();
 
   useEffect(() => {
     if (token) {
       getAllUsers(token, dataDispatch);
-      getAllPosts(token, dataDispatch);
+      getAllPosts(token, dataDispatch, user);
     }
   }, [token]);
 

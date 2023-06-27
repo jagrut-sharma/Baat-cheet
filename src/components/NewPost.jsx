@@ -12,7 +12,7 @@ export default function NewPost({ user, token, dataDispatch }) {
     const postDetails = {
       content: post,
     };
-    createNewPost(token, dataDispatch, postDetails);
+    createNewPost(token, dataDispatch, postDetails, user);
     setPost("");
   };
 
