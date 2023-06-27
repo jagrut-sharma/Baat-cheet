@@ -205,11 +205,10 @@ export const dislikePost = async (
 
 export const bookmarkPost = async (postID, token, dispatch, setPostLoader) => {
   try {
-    console.log(postID);
-    console.log(token);
     setPostLoader(true);
     await axios.post(
       `https://baatcheet-backend.vercel.app/api/post/bookmark/${postID}`,
+      {},
       {
         headers: {
           Authorization: token,
