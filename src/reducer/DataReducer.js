@@ -7,6 +7,7 @@ export const initialData = {
   userPosts: [],
   profileDetails: null,
   likedPosts: [],
+  bookmarkedPosts: [],
 };
 
 export const dataReducer = (draft, action) => {

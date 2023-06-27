@@ -1,7 +1,12 @@
 /* eslint-disable react/prop-types */
 import * as Separator from "@radix-ui/react-separator";
-import { BsBookmark, BsHeart, BsFillHeartFill } from "react-icons/bs";
-import { FaRegComment } from "react-icons/fa";
+import {
+  BsBookmark,
+  BsHeart,
+  BsFillHeartFill,
+  BsFillBookmarkFill,
+} from "react-icons/bs";
+// import { FaRegComment } from "react-icons/fa";
 
 import AvatarEle from "./AvatarEle";
 import Dropdown from "./Dropdown";
@@ -9,21 +14,36 @@ import { getHumanizeTimeForOlderPost } from "../utils/helperFunctions";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { dislikePost, likePost } from "../services/postServices";
+import {
+  bookmarkPost,
+  dislikePost,
+  likePost,
+  unbookmarkPost,
+} from "../services/postServices";
 import { useData } from "../context/DataContext";
 
 export default function Post({ post }) {
   const { user, token } = useAuth();
-  const { dataDispatch } = useData();
+  const { dataState, dataDispatch } = useData();
   const [postLoader, setPostLoader] = useState(false);
 
   const isLiked = post?.likes?.likedBy.includes(user._id);
+  const loggedUser = dataState.allUsers.find(({ _id }) => _id === user._id);
+  const isBookmarked = loggedUser.bookmarks.includes(post._id);
 
   const handleLike = () => {
     if (isLiked) {
       dislikePost(token, post._id, setPostLoader, user, dataDispatch);
     } else {
       likePost(token, post._id, setPostLoader, user, dataDispatch);
+    }
+  };
+
+  const handleBookmark = () => {
+    if (isBookmarked) {
+      unbookmarkPost(post._id, token, dataDispatch, setPostLoader);
+    } else {
+      bookmarkPost(post._id, token, dataDispatch, setPostLoader);
     }
   };
 
@@ -91,13 +111,12 @@ export default function Post({ post }) {
 
       <div className="flex gap-6 px-4 pt-2 dark:text-slate-50">
         <button
-          className={`rounded-full p-2 hover:bg-blue-100 dark:hover:bg-gray-600`}
+          className={`rounded-full p-2 text-red-600 hover:bg-blue-100 dark:text-red-500 dark:hover:bg-gray-600`}
           onClick={handleLike}
         >
           {isLiked ? (
             <BsFillHeartFill
               size={"1.2rem"}
-              color="#dc2626"
               className={`${
                 postLoader ? "cursor-not-allowed" : "cursor-pointer"
               }`}
@@ -111,12 +130,30 @@ export default function Post({ post }) {
             />
           )}
         </button>
-        <button className="rounded-full p-2 hover:bg-blue-100 dark:hover:bg-gray-600">
-          <BsBookmark size={"1.2rem"} className="cursor-pointer" />
+
+        <button
+          className="rounded-full p-2 text-blue-700 hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"
+          onClick={handleBookmark}
+        >
+          {isBookmarked ? (
+            <BsFillBookmarkFill
+              size={"1.2rem"}
+              className={`${
+                postLoader ? "cursor-not-allowed" : "cursor-pointer"
+              } `}
+            />
+          ) : (
+            <BsBookmark
+              size={"1.2rem"}
+              className={`${
+                postLoader ? "cursor-not-allowed" : "cursor-pointer"
+              } `}
+            />
+          )}
         </button>
-        <button className="rounded-full p-2 hover:bg-blue-100 dark:hover:bg-gray-600">
+        {/* <button className="rounded-full p-2 hover:bg-blue-100 dark:hover:bg-gray-600">
           <FaRegComment size={"1.2rem"} className="cursor-pointer" />
-        </button>
+        </button> */}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ACTIONS } from "../utils/constants";
+import { getAllUsers } from "./userServices";
 
 export const getAllPosts = async (token, dataDispatch, user, setLoader) => {
   try {
@@ -193,6 +194,60 @@ export const dislikePost = async (
 
     setPostLoader(false);
     getAllPosts(token, dispatch, user, setPostLoader);
+  } catch (err) {
+    setPostLoader(false);
+    console.log(err);
+    const errRes = err?.response?.data?.message ?? "";
+    const errMsg = err?.response?.data?.error ?? "";
+    console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
+  }
+};
+
+export const bookmarkPost = async (postID, token, dispatch, setPostLoader) => {
+  try {
+    console.log(postID);
+    console.log(token);
+    setPostLoader(true);
+    await axios.post(
+      `https://baatcheet-backend.vercel.app/api/post/bookmark/${postID}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    // console.log(res);
+
+    getAllUsers(token, dispatch, setPostLoader);
+    setPostLoader(false);
+  } catch (err) {
+    setPostLoader(false);
+    console.log(err);
+    const errRes = err?.response?.data?.message ?? "";
+    const errMsg = err?.response?.data?.error ?? "";
+    console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
+  }
+};
+
+export const unbookmarkPost = async (
+  postID,
+  token,
+  dispatch,
+  setPostLoader
+) => {
+  try {
+    setPostLoader(true);
+    await axios.delete(
+      `https://baatcheet-backend.vercel.app/api/post/bookmark/${postID}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    getAllUsers(token, dispatch, setPostLoader);
+    setPostLoader(false);
   } catch (err) {
     setPostLoader(false);
     console.log(err);
