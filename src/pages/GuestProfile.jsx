@@ -7,6 +7,7 @@ import { getUserDetails } from "../services/userServices";
 import { getSingleUserPosts } from "../services/postServices";
 import Post from "../components/Post";
 import Loader from "../components/Loader";
+import { ACTIONS } from "../utils/constants";
 
 export default function GuestProfile() {
   const [profileLoader, setProfileLoader] = useState(true);
@@ -19,8 +20,20 @@ export default function GuestProfile() {
   const { token } = useAuth();
 
   useEffect(() => {
-    getUserDetails(token, userID, dataDispatch, setProfileLoader);
-    getSingleUserPosts(token, userID, dataDispatch, setPostLoader);
+    async function fetchData() {
+      const fetchedUser = await getUserDetails(
+        token,
+        userID,
+        dataDispatch,
+        setProfileLoader
+      );
+      dataDispatch({
+        type: ACTIONS.FETCH_PROFILE_DETAILS,
+        payload: fetchedUser,
+      });
+      getSingleUserPosts(token, userID, dataDispatch, setPostLoader);
+    }
+    fetchData();
   }, [userID]);
 
   return (
@@ -40,7 +53,7 @@ export default function GuestProfile() {
                 </p>
               )}
               {profilePosts.map((post) => (
-                <Post key={post._id} post={post} />
+                <Post key={post._id} post={post} fromProfilePost />
               ))}
             </>
           )}

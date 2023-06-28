@@ -64,6 +64,18 @@ export const dataReducer = (draft, action) => {
       break;
     }
 
+    case ACTIONS.FETCH_BOOKMARK_POSTS: {
+      draft.bookmarkedPosts = action.payload;
+      break;
+    }
+
+    case ACTIONS.REMOVE_BOOKMARK_POST: {
+      draft.bookmarkedPosts = draft.bookmarkedPosts.filter(
+        ({ _id }) => _id !== action.payload
+      );
+      break;
+    }
+
     default:
       break;
   }

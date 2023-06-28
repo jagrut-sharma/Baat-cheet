@@ -17,25 +17,73 @@ import { useState } from "react";
 import {
   bookmarkPost,
   dislikePost,
+  getSingleUserPosts,
   likePost,
   unbookmarkPost,
 } from "../services/postServices";
 import { useData } from "../context/DataContext";
+import { getUserDetails } from "../services/userServices";
+import { ACTIONS } from "../utils/constants";
 
-export default function Post({ post }) {
+export default function Post({ post, fromProfilePost, fromBookmark }) {
   const { user, token } = useAuth();
   const { dataState, dataDispatch } = useData();
   const [postLoader, setPostLoader] = useState(false);
 
-  const isLiked = post?.likes?.likedBy.includes(user._id);
-  const loggedUser = dataState.allUsers.find(({ _id }) => _id === user._id);
-  const isBookmarked = loggedUser.bookmarks.includes(post._id);
+  let isLiked;
 
-  const handleLike = () => {
-    if (isLiked) {
-      dislikePost(token, post._id, setPostLoader, user, dataDispatch);
-    } else {
-      likePost(token, post._id, setPostLoader, user, dataDispatch);
+  if (fromProfilePost) {
+    const likedArr = post?.likes?.likedBy.map(({ _id }) => _id);
+    isLiked = likedArr.includes(user._id);
+  } else {
+    isLiked = post?.likes?.likedBy.includes(user._id);
+  }
+
+  const loggedUser = dataState?.allUsers.find(({ _id }) => _id === user._id);
+  const isBookmarked = loggedUser?.bookmarks.includes(post._id);
+
+  const handleLike = async () => {
+    try {
+      setPostLoader(true);
+      let res;
+      console.log(isLiked);
+      if (isLiked) {
+        res = await dislikePost(
+          token,
+          post._id,
+          setPostLoader,
+          user,
+          dataDispatch
+        );
+      } else {
+        res = await likePost(
+          token,
+          post._id,
+          setPostLoader,
+          user,
+          dataDispatch
+        );
+      }
+      setPostLoader(true);
+      if (res.status === 200 && fromProfilePost) {
+        getSingleUserPosts(token, user._id, dataDispatch, setPostLoader);
+      }
+
+      if (res.status === 200 && fromBookmark) {
+        const fetchedUser = await getUserDetails(
+          token,
+          user._id,
+          dataDispatch,
+          setPostLoader
+        );
+        dataDispatch({
+          type: ACTIONS.FETCH_BOOKMARK_POSTS,
+          payload: fetchedUser.bookmarks,
+        });
+      }
+      setPostLoader(false);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -110,26 +158,33 @@ export default function Post({ post }) {
       <Separator.Root className="self-start bg-gray-300 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-[100%] data-[orientation=vertical]:w-px dark:bg-gray-500" />
 
       <div className="flex gap-6 px-4 pt-2 dark:text-slate-50">
-        <button
-          className={`rounded-full p-2 text-red-600 hover:bg-blue-100 dark:text-red-500 dark:hover:bg-gray-600`}
-          onClick={handleLike}
-        >
-          {isLiked ? (
-            <BsFillHeartFill
-              size={"1.2rem"}
-              className={`${
-                postLoader ? "cursor-not-allowed" : "cursor-pointer"
-              }`}
-            />
-          ) : (
-            <BsHeart
-              size={"1.2rem"}
-              className={`${
-                postLoader ? "cursor-not-allowed" : "cursor-pointer"
-              } `}
-            />
-          )}
-        </button>
+        <div className="flex items-center">
+          <button
+            className={`rounded-full p-2 text-red-600 hover:bg-blue-100 dark:text-red-500 dark:hover:bg-gray-600`}
+            onClick={handleLike}
+          >
+            {isLiked ? (
+              <BsFillHeartFill
+                size={"1.2rem"}
+                className={`${
+                  postLoader ? "cursor-not-allowed" : "cursor-pointer"
+                }`}
+              />
+            ) : (
+              <BsHeart
+                size={"1.2rem"}
+                className={`${
+                  postLoader ? "cursor-not-allowed" : "cursor-pointer"
+                } `}
+              />
+            )}
+          </button>
+          <span
+            className={`${post.likes.likeCount > 0 ? "visible" : "invisible"}`}
+          >
+            {post.likes.likeCount}
+          </span>
+        </div>
 
         <button
           className="rounded-full p-2 text-blue-700 hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"

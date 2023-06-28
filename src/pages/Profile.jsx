@@ -4,7 +4,7 @@ import ProfileDescription from "../components/ProfileDescription";
 import { useAuth } from "../context/AuthContext";
 import { useData } from "../context/DataContext";
 import { getSingleUserPosts } from "../services/postServices";
-import { HashLoader } from "react-spinners";
+import Loader from "../components/Loader";
 
 export default function Profile() {
   const [profileLoader, setProfileLoader] = useState(false);
@@ -18,21 +18,12 @@ export default function Profile() {
     getSingleUserPosts(token, user._id, dataDispatch, setProfileLoader, true);
   }, []);
 
-  // console.log(user);
-
   return (
     <>
       <ProfileDescription user={user} />
 
       {profileLoader ? (
-        <div className="mt-8 flex justify-center">
-          <HashLoader
-            color={
-              localStorage.getItem("theme") === "light" ? "#1d4ed8" : "#3b82f6"
-            }
-            loading={profileLoader}
-          />
-        </div>
+        <Loader loadingState={profileLoader} />
       ) : (
         userPosts.map((post) => <Post key={post._id} post={post} />)
       )}

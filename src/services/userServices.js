@@ -54,7 +54,7 @@ export const getUserDetails = async (
     } = res;
 
     setProfileLoader(false);
-    dispatch({ type: ACTIONS.FETCH_PROFILE_DETAILS, payload: user });
+    return user;
   } catch (err) {
     setProfileLoader(false);
     console.log(err);

@@ -26,6 +26,9 @@ export const getAllPosts = async (token, dataDispatch, user, setLoader) => {
     dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: posts });
     getLikedPosts(posts, dataDispatch, user);
   } catch (err) {
+    if (setLoader) {
+      setLoader(false);
+    }
     console.log(err);
   }
 };
@@ -148,7 +151,7 @@ export const likePost = async (
 ) => {
   try {
     setPostLoader(true);
-    await axios.post(
+    const res = await axios.post(
       "https://baatcheet-backend.vercel.app/api/post/like",
       {
         postId: postID,
@@ -160,8 +163,8 @@ export const likePost = async (
       }
     );
 
-    setPostLoader(false);
     getAllPosts(token, dispatch, user, setPostLoader);
+    return res;
   } catch (err) {
     setPostLoader(false);
     console.log(err);
@@ -180,7 +183,7 @@ export const dislikePost = async (
 ) => {
   try {
     setPostLoader(true);
-    await axios.post(
+    const res = await axios.post(
       "https://baatcheet-backend.vercel.app/api/post/dislike",
       {
         postId: postID,
@@ -192,8 +195,8 @@ export const dislikePost = async (
       }
     );
 
-    setPostLoader(false);
     getAllPosts(token, dispatch, user, setPostLoader);
+    return res;
   } catch (err) {
     setPostLoader(false);
     console.log(err);
@@ -215,7 +218,6 @@ export const bookmarkPost = async (postID, token, dispatch, setPostLoader) => {
         },
       }
     );
-    // console.log(res);
 
     getAllUsers(token, dispatch, setPostLoader);
     setPostLoader(false);
@@ -245,6 +247,10 @@ export const unbookmarkPost = async (
       }
     );
 
+    dispatch({
+      type: ACTIONS.REMOVE_BOOKMARK_POST,
+      payload: postID,
+    });
     getAllUsers(token, dispatch, setPostLoader);
     setPostLoader(false);
   } catch (err) {

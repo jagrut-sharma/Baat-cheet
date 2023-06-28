@@ -26,11 +26,11 @@ export default function ProfileDescription({ user }) {
 
           <p className="item ml-2 flex flex-col justify-center gap-1 dark:text-gray-50 md:ml-0">
             {`${user?.firstName} ${user?.lastName}`}
-            <span className="text-[small]">{`@${user.username}`}</span>
+            <span className="text-[small]">{`@${user?.username}`}</span>
           </p>
         </div>
 
-        {user._id === loggedUser._id && (
+        {user?._id === loggedUser._id && (
           <div className="flex md:hidden">
             <EditProfileModal />
             <button
@@ -42,7 +42,7 @@ export default function ProfileDescription({ user }) {
           </div>
         )}
 
-        {user._id === loggedUser._id && (
+        {user?._id === loggedUser._id && (
           <div className="hidden md:flex">
             <EditProfileModal />
             <button
@@ -54,7 +54,7 @@ export default function ProfileDescription({ user }) {
           </div>
         )}
 
-        {user._id !== loggedUser._id && (
+        {user?._id !== loggedUser._id && (
           <div>
             <button className="mx-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80">
               Follow
@@ -63,14 +63,14 @@ export default function ProfileDescription({ user }) {
         )}
       </div>
 
-      <p className="mt-4 dark:text-gray-50 ">{user.bio}</p>
+      <p className="mt-4 dark:text-gray-50 ">{user?.bio}</p>
       <div className="mt-2 hover:underline dark:text-gray-50 ">
         <a
           href="https://jagrut-sharma.netlify.app/"
           target="_blank"
           rel="noreferrer"
         >
-          {user.link}
+          {user?.link}
         </a>
       </div>
     </div>
