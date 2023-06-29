@@ -8,6 +8,7 @@ export const initialData = {
   profileDetails: null,
   likedPosts: [],
   bookmarkedPosts: [],
+  bookmarkedPostsID: [],
 };
 
 export const dataReducer = (draft, action) => {
@@ -65,7 +66,8 @@ export const dataReducer = (draft, action) => {
     }
 
     case ACTIONS.FETCH_BOOKMARK_POSTS: {
-      draft.bookmarkedPosts = action.payload;
+      draft.bookmarkedPosts = action.payload.bookmarksPost;
+      draft.bookmarkedPostsID = action.payload.bookmarksID;
       break;
     }
 

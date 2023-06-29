@@ -27,3 +27,5 @@ export const toastConfig = {
   progress: undefined,
   theme: "dark",
 };
+
+export const baseURL = "https://baatcheet-backend.vercel.app";

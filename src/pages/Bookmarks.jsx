@@ -5,6 +5,7 @@ import { useData } from "../context/DataContext";
 import { getUserDetails } from "../services/userServices";
 import Loader from "../components/Loader";
 import { ACTIONS } from "../utils/constants";
+import { getBookmarks } from "../services/postServices";
 
 export default function Bookmarks() {
   const [bookmarkLoader, setBookmarkLoader] = useState(true);
@@ -16,16 +17,22 @@ export default function Bookmarks() {
 
   useEffect(() => {
     async function fetchuserData() {
+      setBookmarkLoader(true);
       const fetchedUser = await getUserDetails(
         token,
         user._id,
         dataDispatch,
         setBookmarkLoader
       );
+      setBookmarkLoader(true);
+
+      const resArr = await getBookmarks(token);
+
       dataDispatch({
         type: ACTIONS.FETCH_BOOKMARK_POSTS,
-        payload: fetchedUser.bookmarks,
+        payload: { bookmarksID: fetchedUser.bookmarks, bookmarksPost: resArr },
       });
+      setBookmarkLoader(false);
     }
     fetchuserData();
   }, []);

@@ -17,6 +17,7 @@ import { useState } from "react";
 import {
   bookmarkPost,
   dislikePost,
+  getBookmarks,
   getSingleUserPosts,
   likePost,
   unbookmarkPost,
@@ -39,14 +40,14 @@ export default function Post({ post, fromProfilePost, fromBookmark }) {
     isLiked = post?.likes?.likedBy.includes(user._id);
   }
 
-  const loggedUser = dataState?.allUsers.find(({ _id }) => _id === user._id);
-  const isBookmarked = loggedUser?.bookmarks.includes(post._id);
+  // const loggedUser = dataState?.allUsers.find(({ _id }) => _id === user._id);
+  const isBookmarked = dataState.bookmarkedPostsID.includes(post._id);
 
   const handleLike = async () => {
     try {
       setPostLoader(true);
       let res;
-      console.log(isLiked);
+
       if (isLiked) {
         res = await dislikePost(
           token,
@@ -64,6 +65,7 @@ export default function Post({ post, fromProfilePost, fromBookmark }) {
           dataDispatch
         );
       }
+
       setPostLoader(true);
       if (res.status === 200 && fromProfilePost) {
         getSingleUserPosts(token, user._id, dataDispatch, setPostLoader);
@@ -76,9 +78,14 @@ export default function Post({ post, fromProfilePost, fromBookmark }) {
           dataDispatch,
           setPostLoader
         );
+        setPostLoader(true);
+        const resArr = await getBookmarks(token);
         dataDispatch({
           type: ACTIONS.FETCH_BOOKMARK_POSTS,
-          payload: fetchedUser.bookmarks,
+          payload: {
+            bookmarksID: fetchedUser.bookmarks,
+            bookmarksPost: resArr,
+          },
         });
       }
       setPostLoader(false);
@@ -87,12 +94,26 @@ export default function Post({ post, fromProfilePost, fromBookmark }) {
     }
   };
 
-  const handleBookmark = () => {
+  const handleBookmark = async () => {
     if (isBookmarked) {
-      unbookmarkPost(post._id, token, dataDispatch, setPostLoader);
+      await unbookmarkPost(post._id, token, dataDispatch, setPostLoader);
     } else {
-      bookmarkPost(post._id, token, dataDispatch, setPostLoader);
+      await bookmarkPost(post._id, token, dataDispatch, setPostLoader);
     }
+
+    const fetchedUser = await getUserDetails(
+      token,
+      user._id,
+      dataDispatch,
+      setPostLoader
+    );
+    setPostLoader(true);
+    const resArr = await getBookmarks(token);
+    dataDispatch({
+      type: ACTIONS.FETCH_BOOKMARK_POSTS,
+      payload: { bookmarksID: fetchedUser.bookmarks, bookmarksPost: resArr },
+    });
+    setPostLoader(false);
   };
 
   return (

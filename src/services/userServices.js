@@ -1,19 +1,16 @@
 import axios from "axios";
-import { ACTIONS } from "../utils/constants";
+import { ACTIONS, baseURL } from "../utils/constants";
 
 export const getAllUsers = async (token, dataDispatch, setLoader) => {
   try {
     if (setLoader) {
       setLoader(true);
     }
-    const res = await axios.get(
-      "https://baatcheet-backend.vercel.app/api/user",
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+    const res = await axios.get(`${baseURL}/api/user`, {
+      headers: {
+        Authorization: token,
+      },
+    });
 
     const {
       data: { users },
@@ -40,14 +37,11 @@ export const getUserDetails = async (
 ) => {
   try {
     setProfileLoader(true);
-    const res = await axios.get(
-      `https://baatcheet-backend.vercel.app/api/user/${userID}`,
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+    const res = await axios.get(`${baseURL}/api/user/${userID}`, {
+      headers: {
+        Authorization: token,
+      },
+    });
 
     const {
       data: { user },
@@ -74,7 +68,7 @@ export const followUser = async (
 ) => {
   try {
     const res = await axios.post(
-      "https://baatcheet-backend.vercel.app/api/user/follow",
+      `${baseURL}/api/user/follow`,
       {
         followId: userID,
       },
@@ -113,7 +107,7 @@ export const unfollowUser = async (
 ) => {
   try {
     const res = await axios.post(
-      "https://baatcheet-backend.vercel.app/api/user/unfollow",
+      `${baseURL}/api/user/unfollow`,
       {
         unfollowId: userID,
       },

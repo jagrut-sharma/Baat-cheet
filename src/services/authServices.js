@@ -1,11 +1,11 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { toast } from "react-toastify";
-import { toastConfig } from "../utils/constants";
+import { baseURL, toastConfig } from "../utils/constants";
 
 export const loginHandler = async (
   setAuthLoader,
-  baseURL,
+  loginURL,
   formValue,
   setToken,
   setUser,
@@ -14,21 +14,18 @@ export const loginHandler = async (
 ) => {
   try {
     setAuthLoader(true);
-    const res = await axios.post(baseURL, formValue);
+    const res = await axios.post(loginURL, formValue);
 
     const {
       data: { token },
     } = res;
     const { _id: userID } = jwt_decode(token);
 
-    const userRes = await axios.get(
-      `https://baatcheet-backend.vercel.app/api/user/${userID}`,
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+    const userRes = await axios.get(`${baseURL}/api/user/${userID}`, {
+      headers: {
+        Authorization: token,
+      },
+    });
 
     const {
       data: { user },
@@ -77,7 +74,7 @@ export const loginHandler = async (
 
 export const signupHandler = async (
   setAuthLoader,
-  baseURL,
+  loginURL,
   formValue,
   setToken,
   setUser,
@@ -85,13 +82,13 @@ export const signupHandler = async (
 ) => {
   try {
     setAuthLoader(true);
-    const registerRes = await axios.post(baseURL, formValue);
+    const registerRes = await axios.post(loginURL, formValue);
     console.log(registerRes);
-    baseURL = "https://baatcheet-backend.vercel.app/api/auth/signin";
+    loginURL = `${baseURL}/api/auth/signin`;
 
     loginHandler(
       setAuthLoader,
-      baseURL,
+      loginURL,
       formValue,
       setToken,
       setUser,
