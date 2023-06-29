@@ -3,14 +3,20 @@ import AvatarEle from "./AvatarEle";
 import { useData } from "../context/DataContext";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { followUser, unfollowUser } from "../services/userServices";
 
 export default function RightSideBar() {
+  const [loader, setLoader] = useState(false);
   const {
     dataState: { allUsers },
+    dataDispatch,
   } = useData();
 
   const {
     user: { following, _id: userID },
+    token,
+    setUser,
   } = useAuth();
 
   const followingIDArr = following.map(({ _id }) => _id);
@@ -19,9 +25,18 @@ export default function RightSideBar() {
     ({ _id }) => !followingIDArr.includes(_id) && _id !== userID
   );
 
-  const handleFollow = (e) => {
+  const handleFollow = async (e, followUserID) => {
     e.preventDefault();
-    console.log("Followed");
+    setLoader(true);
+    await followUser(
+      followUserID,
+      token,
+      dataDispatch,
+      setLoader,
+      userID,
+      setUser
+    );
+    setLoader(false);
   };
 
   return (
@@ -34,7 +49,11 @@ export default function RightSideBar() {
                 Suggestions
               </div>
               {suggestedUsers.map((user) => (
-                <Link key={user._id} to={`/profile/${user._id}`}>
+                <Link
+                  key={user._id}
+                  to={`/profile/${user._id}`}
+                  disabled={loader}
+                >
                   <div
                     className="mt-2.5 flex border-b border-b-gray-300 px-5 pt-2.5 text-[1rem] leading-[18px] text-black dark:border-b-gray-600 dark:text-slate-50"
                     key={user._id}
@@ -51,7 +70,8 @@ export default function RightSideBar() {
 
                       <button
                         className="mb-2 mt-1 w-[5.6rem] rounded-lg bg-blue-600 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
-                        onClick={handleFollow}
+                        onClick={(e) => handleFollow(e, user._id)}
+                        disabled={loader}
                       >
                         Follow
                       </button>

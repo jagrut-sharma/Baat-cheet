@@ -63,3 +63,81 @@ export const getUserDetails = async (
     console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
   }
 };
+
+export const followUser = async (
+  userID,
+  token,
+  dispatch,
+  setLoader,
+  loggeduserID,
+  setUser
+) => {
+  try {
+    const res = await axios.post(
+      "https://baatcheet-backend.vercel.app/api/user/follow",
+      {
+        followId: userID,
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    if (res.status === 200) {
+      // test
+      const resUser = await getUserDetails(
+        token,
+        loggeduserID,
+        dispatch,
+        setLoader
+      );
+      setUser(resUser);
+    }
+  } catch (err) {
+    console.log(err);
+    const errRes = err?.response?.data?.message ?? "";
+    const errMsg = err?.response?.data?.error ?? "";
+    console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
+  }
+};
+
+export const unfollowUser = async (
+  userID,
+  token,
+  dispatch,
+  setLoader,
+  loggeduserID,
+  setUser
+) => {
+  try {
+    const res = await axios.post(
+      "https://baatcheet-backend.vercel.app/api/user/unfollow",
+      {
+        unfollowId: userID,
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    if (res.status === 200) {
+      // test
+      const resUser = await getUserDetails(
+        token,
+        loggeduserID,
+        dispatch,
+        setLoader
+      );
+      setUser(resUser);
+    }
+  } catch (err) {
+    console.log(err);
+    const errRes = err?.response?.data?.message ?? "";
+    const errMsg = err?.response?.data?.error ?? "";
+    console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
+  }
+};

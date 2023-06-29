@@ -4,13 +4,48 @@ import AvatarEle from "./AvatarEle";
 import EditProfileModal from "./EditProfileModal";
 import { useAuth } from "../context/AuthContext";
 import { logoutHandler } from "../services/authServices";
+import { useState } from "react";
+import { followUser, unfollowUser } from "../services/userServices";
+import { useData } from "../context/DataContext";
 
-export default function ProfileDescription({ user }) {
-  const { setToken, setUser, setHasLoggedOut, user: loggedUser } = useAuth();
+export default function ProfileDescription({ user, isFollowing }) {
+  const {
+    setToken,
+    token,
+    setUser,
+    setHasLoggedOut,
+    user: loggedUser,
+  } = useAuth();
+  const { dataDispatch } = useData();
+  const [loader, setLoader] = useState(false);
 
   const handleLogout = () => {
     setHasLoggedOut(true);
     logoutHandler(setToken, setUser);
+  };
+
+  const handleFollow = async () => {
+    setLoader(true);
+    if (isFollowing) {
+      await unfollowUser(
+        user._id,
+        token,
+        dataDispatch,
+        setLoader,
+        loggedUser._id,
+        setUser
+      );
+    } else {
+      await followUser(
+        user._id,
+        token,
+        dataDispatch,
+        setLoader,
+        loggedUser._id,
+        setUser
+      );
+    }
+    setLoader(false);
   };
 
   return (
@@ -55,11 +90,13 @@ export default function ProfileDescription({ user }) {
         )}
 
         {user?._id !== loggedUser._id && (
-          <div>
-            <button className="mx-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80">
-              Follow
-            </button>
-          </div>
+          <button
+            className="mx-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
+            onClick={handleFollow}
+            disabled={loader}
+          >
+            {isFollowing ? "Unfollow" : "Follow"}
+          </button>
         )}
       </div>
 

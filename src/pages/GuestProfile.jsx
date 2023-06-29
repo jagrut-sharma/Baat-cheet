@@ -17,7 +17,7 @@ export default function GuestProfile() {
     dataState: { profileDetails, profilePosts },
     dataDispatch,
   } = useData();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
 
   useEffect(() => {
     async function fetchData() {
@@ -36,13 +36,17 @@ export default function GuestProfile() {
     fetchData();
   }, [userID]);
 
+  const followingPeoplesID = user.following.map(({ _id }) => _id);
+
+  const isFollowing = followingPeoplesID.includes(userID);
+
   return (
     <>
       {profileLoader ? (
         <Loader loadingState={profileLoader} />
       ) : (
         <>
-          <ProfileDescription user={profileDetails} />
+          <ProfileDescription user={profileDetails} isFollowing={isFollowing} />
           {postLoader ? (
             <Loader loadingState={postLoader} />
           ) : (
