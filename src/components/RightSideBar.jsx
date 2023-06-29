@@ -4,7 +4,7 @@ import { useData } from "../context/DataContext";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { followUser, unfollowUser } from "../services/userServices";
+import { followUser } from "../services/userServices";
 
 export default function RightSideBar() {
   const [loader, setLoader] = useState(false);

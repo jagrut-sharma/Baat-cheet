@@ -13,6 +13,7 @@ export default function Home() {
   const [currCategory, setCurrCategory] = useState("Recent");
   const { user, token } = useAuth();
   const { dataState, dataDispatch } = useData();
+  let postCategory = ["Recent", "Trending"];
 
   const handleCategory = (e) => {
     setCurrCategory(e.target.name);
@@ -25,9 +26,16 @@ export default function Home() {
     followingPeoplesID.includes(author._id)
   );
 
-  // console.log(dataState.allPosts);
+  let sortedPosts = [...homePagePosts];
 
-  let postCategory = ["Recent", "Trending"];
+  if (currCategory === "Trending") {
+    sortedPosts.sort((a, b) => {
+      const likeA = a.likes.likeCount;
+      const likeB = b.likes.likeCount;
+
+      return likeB - likeA;
+    });
+  }
 
   return (
     <main className="relative flex flex-col items-center">
@@ -58,7 +66,7 @@ export default function Home() {
 
         <NewPost user={user} token={token} dataDispatch={dataDispatch} />
 
-        {homePagePosts.map((post) => (
+        {sortedPosts.map((post) => (
           <Post key={post._id} post={post} />
         ))}
       </div>

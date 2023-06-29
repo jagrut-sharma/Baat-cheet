@@ -21,6 +21,17 @@ export default function Explore() {
     setCurrCategory(e.target.name);
   };
 
+  let sortedPosts = [...allPosts];
+
+  if (currCategory === "Trending") {
+    sortedPosts.sort((a, b) => {
+      const likeA = a.likes.likeCount;
+      const likeB = b.likes.likeCount;
+
+      return likeB - likeA;
+    });
+  }
+
   return (
     <main className="relative flex flex-col items-center">
       <div className="relative w-full px-6 py-4 md:px-8 lg:max-w-3xl">
@@ -48,7 +59,7 @@ export default function Explore() {
           </Tab.List>
         </Tab.Group>
 
-        {allPosts.map((post) => (
+        {sortedPosts.map((post) => (
           <Post key={post._id} post={post} />
         ))}
       </div>

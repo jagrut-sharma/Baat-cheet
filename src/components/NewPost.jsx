@@ -8,6 +8,7 @@ export default function NewPost({ user, token, dataDispatch }) {
   const [post, setPost] = useState("");
 
   const handleNewPost = (e) => {
+    console.log("handle");
     e.preventDefault();
     const postDetails = {
       content: post,
@@ -60,7 +61,8 @@ export default function NewPost({ user, token, dataDispatch }) {
         </div>
         <button
           onClick={handleNewPost}
-          className="m-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
+          className="m-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-500 dark:hover:opacity-80"
+          disabled={post.length === 0}
         >
           Post
         </button>

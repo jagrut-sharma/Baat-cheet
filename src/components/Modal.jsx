@@ -159,7 +159,8 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
                         </div>
                         <button
                           onClick={contents ? handleEditPost : handleNewPost}
-                          className="m-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
+                          className="m-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 disabled:cursor-not-allowed disabled:opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
+                          disabled={post.length === 0}
                         >
                           {contents ? "Save" : "Post"}
                         </button>
