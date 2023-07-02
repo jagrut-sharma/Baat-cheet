@@ -81,6 +81,7 @@ export const signupHandler = async (
   setButtonLoader
 ) => {
   try {
+    console.log("Signing up");
     setAuthLoader(true);
     const registerRes = await axios.post(loginURL, formValue);
     console.log(registerRes);
@@ -97,6 +98,11 @@ export const signupHandler = async (
     );
   } catch (error) {
     setAuthLoader(false);
+    setButtonLoader({
+      login: false,
+      guest: false,
+      register: false,
+    });
     console.log(error);
     const errRes = error?.response?.data?.message ?? "";
     const errMsg = error?.response?.data?.error ?? "";

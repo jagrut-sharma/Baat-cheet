@@ -48,9 +48,15 @@ export default function AuthForm({
     if (isRegister) {
       if (formData.password !== formData.cnfPassword) {
         setErr("Password do not match");
+        setButtonLoader({
+          login: false,
+          guest: false,
+          register: false,
+        });
         return;
       }
       setErr("");
+      console.log("submitting form");
       handleFormSubmit(formData);
     } else {
       handleFormSubmit({
