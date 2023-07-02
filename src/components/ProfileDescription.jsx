@@ -7,6 +7,7 @@ import { logoutHandler } from "../services/authServices";
 import { useState } from "react";
 import { followUser, unfollowUser } from "../services/userServices";
 import { useData } from "../context/DataContext";
+import * as Separator from "@radix-ui/react-separator";
 
 export default function ProfileDescription({ user, isFollowing }) {
   const {
@@ -47,6 +48,8 @@ export default function ProfileDescription({ user, isFollowing }) {
     }
     setLoader(false);
   };
+
+  console.log(loggedUser);
 
   return (
     <div className="mb-4 w-[100%] rounded border border-gray-200 bg-gray-50 px-4 py-4 shadow dark:border-gray-600 dark:bg-gray-700">
@@ -109,6 +112,17 @@ export default function ProfileDescription({ user, isFollowing }) {
         >
           {user?.link}
         </a>
+      </div>
+
+      <Separator.Root className="my-[1rem] self-start bg-gray-300 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-[100%] data-[orientation=vertical]:w-px dark:bg-gray-600 md:order-1 md:block" />
+
+      <div className="flex justify-evenly font-Poppins dark:text-gray-50">
+        <p>
+          <span className="mr-2">{user.followers.length}</span>Followers
+        </p>
+        <p>
+          <span className="mr-2">{user.following.length}</span>Following
+        </p>
       </div>
     </div>
   );
