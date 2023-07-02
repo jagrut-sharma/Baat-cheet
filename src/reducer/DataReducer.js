@@ -31,12 +31,18 @@ export const dataReducer = (draft, action) => {
       draft.userPosts = draft.userPosts.map((post) =>
         post._id === newPost._id ? newPost : post
       );
+      draft.profilePosts = draft.profilePosts.map((post) =>
+        post._id === newPost._id ? newPost : post
+      );
       break;
     }
 
     case ACTIONS.DELETE_POST: {
       const postID = action.payload;
       draft.allPosts = draft.allPosts.filter((post) => post._id !== postID);
+      draft.profilePosts = draft.profilePosts.filter(
+        (post) => post._id !== postID
+      );
       break;
     }
 

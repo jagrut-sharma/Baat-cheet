@@ -39,6 +39,7 @@ export const createNewPost = async (token, dispatch, post, user) => {
     });
 
     getAllPosts(token, dispatch, user);
+    getSingleUserPosts(token, user._id, dispatch);
   } catch (err) {
     console.log(err);
     const errRes = err?.response?.data?.message ?? "";
@@ -96,14 +97,18 @@ export const getSingleUserPosts = async (
   isUser
 ) => {
   try {
-    setProfileLoader(true);
+    if (setProfileLoader) {
+      setProfileLoader(true);
+    }
     const res = await axios.get(`${baseURL}/api/user/all-posts/${userID}`, {
       headers: {
         Authorization: token,
       },
     });
 
-    setProfileLoader(false);
+    if (setProfileLoader) {
+      setProfileLoader(false);
+    }
     const {
       data: { posts },
     } = res;
@@ -113,7 +118,9 @@ export const getSingleUserPosts = async (
       payload: posts,
     });
   } catch (err) {
-    setProfileLoader(false);
+    if (setProfileLoader) {
+      setProfileLoader(false);
+    }
     console.log(err);
     const errRes = err?.response?.data?.message ?? "";
     const errMsg = err?.response?.data?.error ?? "";

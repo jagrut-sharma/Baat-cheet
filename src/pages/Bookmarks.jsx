@@ -45,9 +45,15 @@ export default function Bookmarks() {
             <Loader loadingState={bookmarkLoader} />
           ) : (
             <>
-              {bookmarkedPosts.map((post) => (
-                <Post key={post._id} post={post} fromBookmark />
-              ))}
+              {bookmarkedPosts.length === 0 ? (
+                <p className="mt-8 text-center font-Poppins text-2xl">
+                  Bookmark to see posts here
+                </p>
+              ) : (
+                bookmarkedPosts.map((post) => (
+                  <Post key={post._id} post={post} fromBookmark />
+                ))
+              )}
             </>
           )}
         </>

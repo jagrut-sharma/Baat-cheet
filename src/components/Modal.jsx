@@ -13,22 +13,25 @@ import { createNewPost, editPost } from "../services/postServices";
 
 export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
   const [post, setPost] = useState(contents?.content || "");
+  const [loader, setLoader] = useState(false);
   const { dataDispatch } = useData();
   const { token, user } = useAuth();
 
-  const handleNewPost = (e) => {
+  const handleNewPost = async (e) => {
+    setLoader(true);
     e.preventDefault();
     const postDetails = {
       content: post,
     };
-    createNewPost(token, dataDispatch, postDetails);
+    createNewPost(token, dataDispatch, postDetails, user);
     setPost("");
+    setLoader(false);
     closeModal();
   };
 
   const handleEditPost = async (e) => {
     e.preventDefault();
-    console.log("Editing");
+    setLoader(true);
     const postID = contents._id;
     const postDetails = {
       content: post,
@@ -36,6 +39,7 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
     const newContent = { ...contents, content: post };
     await editPost(token, dataDispatch, postDetails, postID, newContent);
     setPost(post);
+    setLoader(false);
     setIsOpen(false);
   };
 
@@ -112,15 +116,15 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-gray-700">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-gray-50 text-left align-middle transition-all dark:bg-gray-600">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900 dark:text-slate-50"
+                    className="p-3 text-lg font-medium leading-6 text-gray-900 dark:text-slate-50"
                   >
                     {isEditing ? "Edit Post" : "New Post"}
                   </Dialog.Title>
-                  <div className="mt-4">
-                    <form className="mb-4 rounded-md border border-gray-300 bg-gray-50 shadow-md dark:border-gray-600 dark:bg-gray-600">
+                  <div className="">
+                    <form className="mb-4 rounded-md bg-gray-50 dark:bg-gray-600">
                       <div className="flex border-b border-b-gray-300 dark:border-b-gray-500">
                         <div className="m-2">
                           <AvatarEle
@@ -136,9 +140,10 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
                           id="post"
                           cols="30"
                           rows="8"
-                          className="w-full resize-none bg-gray-50 p-3 font-OpenSans outline-none dark:bg-gray-600 dark:text-slate-50"
+                          className="w-full resize-none bg-gray-50 p-3 font-OpenSans outline-none disabled:cursor-not-allowed dark:bg-gray-600 dark:text-slate-50"
                           value={post}
                           onChange={handleChange}
+                          disabled={loader}
                         ></textarea>
                       </div>
 
@@ -147,12 +152,14 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
                           <button
                             type="button"
                             className="rounded-full p-2 text-blue-700 hover:bg-blue-200 dark:text-blue-500"
+                            disabled={loader}
                           >
                             <BsFillImageFill size={"1.2rem"} />
                           </button>
                           <button
                             type="button"
                             className="rounded-full p-2 text-orange-400 hover:bg-blue-200"
+                            disabled={loader}
                           >
                             <BsFillEmojiHeartEyesFill size={"1.2rem"} />
                           </button>
@@ -160,7 +167,7 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
                         <button
                           onClick={contents ? handleEditPost : handleNewPost}
                           className="m-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 disabled:cursor-not-allowed disabled:opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
-                          disabled={post.length === 0}
+                          disabled={post.length === 0 || loader}
                         >
                           {contents ? "Save" : "Post"}
                         </button>

@@ -56,7 +56,7 @@ export default function AuthForm({
         return;
       }
       setErr("");
-      console.log("submitting form");
+
       handleFormSubmit(formData);
     } else {
       handleFormSubmit({

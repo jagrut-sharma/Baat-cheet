@@ -5,12 +5,14 @@ import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { followUser } from "../services/userServices";
+import Loader from "./Loader";
 
 export default function RightSideBar() {
   const [loader, setLoader] = useState(false);
   const {
     dataState: { allUsers },
     dataDispatch,
+    dataLoader,
   } = useData();
 
   const {
@@ -48,37 +50,41 @@ export default function RightSideBar() {
               <div className="sticky top-0 z-[2] w-full bg-white py-2 pl-4 font-OpenSans text-[1.2rem] font-bold leading-[18px] text-blue-700 shadow dark:bg-gray-700 dark:text-slate-50">
                 Suggestions
               </div>
-              {suggestedUsers.map((user) => (
-                <Link
-                  key={user._id}
-                  to={`/profile/${user._id}`}
-                  disabled={loader}
-                >
-                  <div
-                    className="mt-2.5 flex border-b border-b-gray-300 px-5 pt-2.5 text-[1rem] leading-[18px] text-black dark:border-b-gray-600 dark:text-slate-50"
+              {dataLoader ? (
+                <Loader loadingState={dataLoader} />
+              ) : (
+                suggestedUsers.map((user) => (
+                  <Link
                     key={user._id}
+                    to={`/profile/${user._id}`}
+                    disabled={loader}
                   >
-                    <AvatarEle
-                      imgLink={user?.pic}
-                      firstName={user?.firstName}
-                      lastName={user?.lastName}
-                    />
+                    <div
+                      className="mt-2.5 flex border-b border-b-gray-300 px-5 pt-2.5 text-[1rem] leading-[18px] text-black dark:border-b-gray-600 dark:text-slate-50"
+                      key={user._id}
+                    >
+                      <AvatarEle
+                        imgLink={user?.pic}
+                        firstName={user?.firstName}
+                        lastName={user?.lastName}
+                      />
 
-                    <div className="item flex flex-col justify-center gap-1">
-                      <span>{user?.firstName + " " + user?.lastName}</span>
-                      <span className="text-[small]">{`@${user.username}`}</span>
+                      <div className="item flex flex-col justify-center gap-1">
+                        <span>{user?.firstName + " " + user?.lastName}</span>
+                        <span className="text-[small]">{`@${user.username}`}</span>
 
-                      <button
-                        className="mb-2 mt-1 w-[5.6rem] rounded-lg bg-blue-600 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
-                        onClick={(e) => handleFollow(e, user._id)}
-                        disabled={loader}
-                      >
-                        Follow
-                      </button>
+                        <button
+                          className="mb-2 mt-1 w-[5.6rem] rounded-lg bg-blue-600 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
+                          onClick={(e) => handleFollow(e, user._id)}
+                          disabled={loader}
+                        >
+                          Follow
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                ))
+              )}
             </div>
           </ScrollArea.Viewport>
           <ScrollArea.Scrollbar

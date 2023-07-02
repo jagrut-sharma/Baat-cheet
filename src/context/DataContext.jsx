@@ -21,8 +21,8 @@ export const DataProvider = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-      getAllUsers(token, dataDispatch);
-      getAllPosts(token, dataDispatch, user);
+      getAllUsers(token, dataDispatch, setDataLoader);
+      getAllPosts(token, dataDispatch, user, setDataLoader);
     }
   }, [token]);
 

@@ -81,10 +81,9 @@ export const signupHandler = async (
   setButtonLoader
 ) => {
   try {
-    console.log("Signing up");
     setAuthLoader(true);
-    const registerRes = await axios.post(loginURL, formValue);
-    console.log(registerRes);
+    await axios.post(loginURL, formValue);
+
     loginURL = `${baseURL}/api/auth/signin`;
 
     loginHandler(

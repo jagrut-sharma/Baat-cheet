@@ -27,13 +27,13 @@ export default function NavSideBar() {
 
   const getUserClass = ({ isActive }) => {
     return isActive
-      ? "order-2 flex w-max items-center border-gray-300 px-2 py-2 text-base font-bold hover:bg-blue-200 dark:border-gray-600 dark:hover:bg-slate-500 md:mb-4 md:mt-auto md:rounded-md md:border bg-blue-200 dark:bg-slate-600 self-center"
-      : "order-2 flex w-max items-center border-gray-300 px-2 py-2 text-base font-bold hover:bg-blue-300 dark:border-gray-600 dark:hover:bg-slate-500 md:mb-4 md:mt-auto md:rounded-md md:border self-center";
+      ? "order-2 flex w-max items-center border-gray-300 px-2 py-2 text-base font-bold hover:bg-blue-200 dark:border-gray-600 dark:hover:bg-slate-500 md:mb-4 md:mt-auto md:rounded-md md:border bg-blue-200 dark:bg-slate-600 self-center md:w-full"
+      : "order-2 flex w-max items-center border-gray-300 px-2 py-2 text-base font-bold hover:bg-blue-300 dark:border-gray-600 dark:hover:bg-slate-500 md:mb-4 md:mt-auto md:rounded-md md:border self-center md:w-full";
   };
 
   return (
     <div className="z-20 row-start-2 flex flex-col justify-between border-gray-300 dark:border-gray-600 dark:text-gray-100 md:z-[5] md:row-auto md:ml-2 md:mr-0 md:flex-col md:justify-start md:border-r">
-      <aside className="fixed bottom-0 left-0 right-0 flex justify-between border-gray-300 bg-gray-200 px-4 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 md:fixed md:bottom-0 md:left-0 md:top-[69px] md:row-auto md:ml-2 md:mr-0 md:mt-2 md:w-[12.5rem] md:flex-col md:justify-start md:border-r md:px-0">
+      <aside className="fixed bottom-0 left-0 right-0 flex justify-between border-gray-300 bg-gray-200 px-4 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 md:fixed md:bottom-0 md:left-0 md:top-[69px] md:row-auto md:ml-2 md:mr-0 md:mt-2 md:w-[12.5rem] md:flex-col md:justify-start md:gap-2 md:border-r md:px-2">
         <NavLink to={"/"} className={getClassName}>
           <AiFillHome
             size={"1.1rem"}
@@ -77,14 +77,14 @@ export default function NavSideBar() {
         <Modal isOpen={isOpen} setIsOpen={setIsOpen} />
 
         <NavLink to={`/profile/${user._id}`} className={getUserClass}>
-          <div className="flex text-[1rem] leading-[18px] text-black dark:border-t-gray-600 dark:text-slate-50">
+          <div className="flex text-[1rem] leading-[18px] text-black dark:border-t-gray-600 dark:text-slate-50 md:min-w-max">
             <AvatarEle
               imgLink={user?.pic}
               firstName={user?.firstName}
               lastName={user?.lastName}
             />
 
-            <div className="item hidden flex-col justify-center gap-1 font-normal md:flex">
+            <div className="item hidden flex-col justify-center gap-1 font-normal md:flex md:w-[7rem] md:flex-col">
               {`${user?.firstName} ${user?.lastName}`}
               <span className="text-[small]">{`@${user?.username}`}</span>
             </div>

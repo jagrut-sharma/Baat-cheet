@@ -4,6 +4,7 @@ import Post from "../components/Post";
 import NewPost from "../components/NewPost";
 import { useAuth } from "../context/AuthContext";
 import { useData } from "../context/DataContext";
+import Loader from "../components/Loader";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -12,7 +13,7 @@ function classNames(...classes) {
 export default function Home() {
   const [currCategory, setCurrCategory] = useState("Recent");
   const { user, token } = useAuth();
-  const { dataState, dataDispatch } = useData();
+  const { dataState, dataDispatch, dataLoader } = useData();
   let postCategory = ["Recent", "Trending"];
 
   const handleCategory = (e) => {
@@ -66,9 +67,21 @@ export default function Home() {
 
         <NewPost user={user} token={token} dataDispatch={dataDispatch} />
 
-        {sortedPosts.map((post) => (
-          <Post key={post._id} post={post} />
-        ))}
+        {dataLoader ? (
+          <Loader loadingState={dataLoader} />
+        ) : (
+          <>
+            {sortedPosts.length === 0 && (
+              <p className="mt-8 text-center font-Poppins text-2xl">
+                Start Following and posting to see posts
+              </p>
+            )}
+
+            {sortedPosts.map((post) => (
+              <Post key={post._id} post={post} />
+            ))}
+          </>
+        )}
       </div>
     </main>
   );

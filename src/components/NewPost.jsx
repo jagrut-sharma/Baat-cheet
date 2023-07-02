@@ -6,15 +6,17 @@ import { createNewPost } from "../services/postServices";
 
 export default function NewPost({ user, token, dataDispatch }) {
   const [post, setPost] = useState("");
+  const [loader, setLoader] = useState(false);
 
-  const handleNewPost = (e) => {
-    console.log("handle");
+  const handleNewPost = async (e) => {
+    setLoader(true);
     e.preventDefault();
     const postDetails = {
       content: post,
     };
-    createNewPost(token, dataDispatch, postDetails, user);
+    await createNewPost(token, dataDispatch, postDetails, user);
     setPost("");
+    setLoader(false);
   };
 
   const handleChange = (e) => {
@@ -38,9 +40,10 @@ export default function NewPost({ user, token, dataDispatch }) {
           id="post"
           cols="30"
           rows="8"
-          className="w-full resize-none bg-gray-50 p-4 font-OpenSans outline-none dark:bg-gray-700 dark:text-slate-50"
+          className={`w-full resize-none bg-gray-50 p-4 font-OpenSans outline-none disabled:cursor-not-allowed dark:bg-gray-700 dark:text-slate-50`}
           value={post}
           onChange={handleChange}
+          disabled={loader}
         ></textarea>
       </div>
 
@@ -62,7 +65,7 @@ export default function NewPost({ user, token, dataDispatch }) {
         <button
           onClick={handleNewPost}
           className="m-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-500 dark:hover:opacity-80"
-          disabled={post.length === 0}
+          disabled={post.length === 0 || loader}
         >
           Post
         </button>
