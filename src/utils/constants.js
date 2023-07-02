@@ -29,3 +29,14 @@ export const toastConfig = {
 };
 
 export const baseURL = "https://baatcheet-backend.vercel.app";
+
+export const avatarList = [
+  "https://res.cloudinary.com/drehkcoil/image/upload/v1688213821/Avatars/Avatar-1_xnsy6r.png",
+  "https://res.cloudinary.com/drehkcoil/image/upload/v1688213821/Avatars/Avatar-2_l8vppk.png",
+  "https://res.cloudinary.com/drehkcoil/image/upload/v1688213821/Avatars/Avatar-3_brd6am.png",
+  "https://res.cloudinary.com/drehkcoil/image/upload/v1688213821/Avatars/Avatar-4_ttmlru.png",
+  "https://res.cloudinary.com/drehkcoil/image/upload/v1688213822/Avatars/Avatar-5_edgeri.png",
+  "https://res.cloudinary.com/drehkcoil/image/upload/v1688213821/Avatars/Avatar-6_nsv5eq.png",
+  "https://res.cloudinary.com/drehkcoil/image/upload/v1688213822/Avatars/Avatar-7_k0hkhf.png",
+  "https://res.cloudinary.com/drehkcoil/image/upload/v1688213821/Avatars/Avatar-8_eagm9i.png",
+];

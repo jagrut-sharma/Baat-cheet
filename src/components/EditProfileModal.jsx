@@ -1,20 +1,70 @@
 /* eslint-disable react/prop-types */
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
 import * as Label from "@radix-ui/react-label";
+import { Fragment, useRef, useState } from "react";
 import { AiFillEdit } from "react-icons/ai";
+import { useImmer } from "use-immer";
+import { useAuth } from "../context/AuthContext";
+import { useData } from "../context/DataContext";
+import { getUserDetails, updateProfile } from "../services/userServices";
 import AvatarEle from "./AvatarEle";
+import DropdownEditProfile from "./DropdownEditProfile";
+import { useMedia } from "../hooks/useMedia";
+import { getAllPosts } from "../services/postServices";
+import AvatarSelectModal from "./AvatarSelectModal";
 
 export default function EditProfileModal() {
   let [isOpen, setIsOpen] = useState(false);
+  const [loader, setLoader] = useState(false);
+  const { user, token, setUser } = useAuth();
+  const [userDetails, setUserDetails] = useImmer({ ...user });
+  const { dataDispatch } = useData();
+  const inputRef = useRef(null);
+  const avatarRef = useRef(null);
+  const { uploadMedia } = useMedia();
 
   function closeModal() {
+    setUserDetails({ ...user });
     setIsOpen(false);
   }
 
   function openModal() {
     setIsOpen(true);
   }
+
+  const handleChange = (e) => {
+    setUserDetails((draft) => {
+      draft[e.target.name] = e.target.value;
+    });
+  };
+
+  const handleUpdateProfile = async () => {
+    setLoader(true);
+    console.log("Updating Profile");
+    const res = await updateProfile(token, userDetails, setLoader);
+    if (res.status === 200) {
+      const resUser = await getUserDetails(
+        token,
+        user._id,
+        dataDispatch,
+        setLoader
+      );
+      console.log(resUser);
+      setUser(resUser);
+      localStorage.setItem("user", JSON.stringify(resUser));
+      getAllPosts(token, dataDispatch, user);
+      setIsOpen(false);
+    }
+    setLoader(false);
+  };
+
+  const handleUploadChange = async (e) => {
+    setLoader(true);
+    const file = e.target.files[0];
+    await uploadMedia(file, setUserDetails);
+    setLoader(false);
+    e.target.value = null;
+  };
 
   return (
     <>
@@ -70,15 +120,24 @@ export default function EditProfileModal() {
                   </Dialog.Title>
                   <div className="mt-2">
                     <div className="flex">
-                      <AvatarEle
-                        imgLink="random"
-                        firstName={"jagrut"}
-                        lastName={"sharma"}
-                      />
+                      <div className="relative">
+                        <AvatarEle
+                          imgLink={userDetails.pic}
+                          firstName={userDetails.firstName}
+                          lastName={userDetails.lastName}
+                          isProfile
+                        />
+
+                        <DropdownEditProfile
+                          inputRef={inputRef}
+                          avatarRef={avatarRef}
+                          loader={loader}
+                        />
+                      </div>
 
                       <p className="item ml-2 flex flex-col justify-center dark:text-gray-50 md:ml-0">
-                        {"Jagrut" + " " + "Sharma"}
-                        <span className="text-[small]">{`test@123`}</span>
+                        {`${userDetails.firstName} ${userDetails.lastName}`}
+                        <span className="text-[small]">{`@${userDetails.username}`}</span>
                       </p>
                     </div>
 
@@ -93,6 +152,10 @@ export default function EditProfileModal() {
                         className="inline-flex h-[35px] w-full appearance-none items-center justify-center rounded-[4px] bg-gray-100 px-[10px] text-[15px] leading-none text-black shadow-[0_0_0_1px] shadow-gray-800 outline-none focus:shadow-[0_0_0_2px_black] dark:bg-gray-500 dark:text-slate-50 dark:shadow-blue-300"
                         type="text"
                         id="bio"
+                        name="bio"
+                        value={userDetails.bio}
+                        onChange={handleChange}
+                        disabled={loader}
                       />
                     </div>
 
@@ -107,6 +170,10 @@ export default function EditProfileModal() {
                         className="inline-flex h-[35px] w-full appearance-none items-center justify-center rounded-[4px] bg-gray-100 px-[10px] text-[15px] leading-none text-black shadow-[0_0_0_1px] shadow-gray-800 outline-none focus:shadow-[0_0_0_2px_black] dark:bg-gray-500 dark:text-slate-50 dark:shadow-blue-300"
                         type="text"
                         id="website"
+                        name="link"
+                        value={userDetails.link}
+                        onChange={handleChange}
+                        disabled={loader}
                       />
                     </div>
                   </div>
@@ -115,11 +182,30 @@ export default function EditProfileModal() {
                     <button
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={closeModal}
+                      onClick={handleUpdateProfile}
+                      disabled={loader}
                     >
                       Update
                     </button>
+
+                    <div>
+                      <input
+                        type="file"
+                        name="pic"
+                        id="pic"
+                        className="hidden"
+                        accept="image/*"
+                        ref={inputRef}
+                        onChange={handleUploadChange}
+                      />
+                    </div>
                   </div>
+
+                  <AvatarSelectModal
+                    avatarRef={avatarRef}
+                    userDetails={userDetails}
+                    setUserDetails={setUserDetails}
+                  />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

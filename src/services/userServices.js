@@ -1,5 +1,6 @@
 import axios from "axios";
-import { ACTIONS, baseURL } from "../utils/constants";
+import { ACTIONS, baseURL, toastConfig } from "../utils/constants";
+import { toast } from "react-toastify";
 
 export const getAllUsers = async (token, dataDispatch, setLoader) => {
   try {
@@ -133,5 +134,28 @@ export const unfollowUser = async (
     const errRes = err?.response?.data?.message ?? "";
     const errMsg = err?.response?.data?.error ?? "";
     console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
+  }
+};
+
+export const updateProfile = async (token, updates, setLoader) => {
+  try {
+    const res = await axios.patch(`${baseURL}/api/user/update`, updates, {
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    console.log(updates);
+
+    return res;
+    // need to update user => profile
+    // need to update user profile description and all posts to reflect changes in profile pic
+  } catch (err) {
+    setLoader(false);
+    console.log(err);
+    const errRes = err?.response?.data?.message ?? "";
+    const errMsg = err?.response?.data?.error ?? "";
+    console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
+    toast.error("Some error occured, Try again", toastConfig);
   }
 };
