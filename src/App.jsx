@@ -16,8 +16,6 @@ import ProfileRootLayout from "./pages/ProfileRootLayout";
 import GuestProfile from "./pages/GuestProfile";
 import ErrorPage from "./pages/ErrorPage";
 
-// Add Error element
-
 const router = createBrowserRouter([
   {
     path: "/",

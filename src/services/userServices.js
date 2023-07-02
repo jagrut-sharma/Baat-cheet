@@ -89,6 +89,7 @@ export const followUser = async (
         setLoader
       );
       setUser(resUser);
+      localStorage.setItem("user", JSON.stringify(resUser));
     }
   } catch (err) {
     console.log(err);
@@ -128,6 +129,7 @@ export const unfollowUser = async (
         setLoader
       );
       setUser(resUser);
+      localStorage.setItem("user", JSON.stringify(resUser));
     }
   } catch (err) {
     console.log(err);
