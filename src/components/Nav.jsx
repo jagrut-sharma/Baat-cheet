@@ -1,17 +1,14 @@
 import { FaSun } from "react-icons/fa";
-import { BsFillMoonStarsFill, BsSearch } from "react-icons/bs";
+import { BsFillMoonStarsFill } from "react-icons/bs";
 import { Switch } from "@headlessui/react";
 import Logo from "./Logo";
 import { Link } from "react-router-dom";
+import SearchBar from "./SearchBar";
 
 // eslint-disable-next-line react/prop-types
 export default function Nav({ theme, setTheme, login }) {
   const handleThemeSwitch = () => {
     setTheme(theme === "dark" ? "light" : "dark");
-  };
-
-  const handleSearchForm = (e) => {
-    e.preventDefault();
   };
 
   return (
@@ -24,26 +21,7 @@ export default function Nav({ theme, setTheme, login }) {
         </h1>
       </Link>
 
-      {!login && (
-        <form
-          className="flex  justify-self-center rounded-3xl border border-stone-400 p-1 focus-within:border-blue-400"
-          onSubmit={handleSearchForm}
-        >
-          <button
-            htmlFor="search"
-            className="cursor-pointer rounded-full bg-blue-600 p-2"
-          >
-            <BsSearch size={"1rem"} />
-          </button>
-          <input
-            type="search"
-            name=""
-            id="search"
-            placeholder="Search users"
-            className="bg-transparent p-1 focus-visible:outline-none dark:text-slate-50"
-          />
-        </form>
-      )}
+      {!login && <SearchBar />}
 
       <div className="col-start-3 mr-2 flex h-full items-center justify-self-end py-4 pr-2 sm:hidden">
         <button onClick={handleThemeSwitch}>

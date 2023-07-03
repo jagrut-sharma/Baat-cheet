@@ -9,13 +9,12 @@ function classNames(...classes) {
 }
 
 export default function Explore() {
+  const [currCategory, setCurrCategory] = useState("Recent");
+
   const {
     dataState: { allPosts },
   } = useData();
-
-  const [currCategory, setCurrCategory] = useState("Recent");
-
-  let postCategory = ["Recent", "Trending"];
+  const postCategory = ["Recent", "Trending"];
 
   const handleCategory = (e) => {
     setCurrCategory(e.target.name);

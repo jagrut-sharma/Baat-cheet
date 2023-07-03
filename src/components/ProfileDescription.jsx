@@ -94,7 +94,7 @@ export default function ProfileDescription({ user, isFollowing }) {
 
         {user?._id !== loggedUser._id && (
           <button
-            className="mx-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
+            className="mx-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 disabled:cursor-not-allowed dark:bg-blue-500 dark:hover:opacity-80"
             onClick={handleFollow}
             disabled={loader}
           >

@@ -74,7 +74,7 @@ export default function RightSideBar() {
                         <span className="text-[small]">{`@${user.username}`}</span>
 
                         <button
-                          className="mb-2 mt-1 w-[5.6rem] rounded-lg bg-blue-600 py-1 font-bold text-white hover:bg-opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
+                          className="mb-2 mt-1 w-[5.6rem] rounded-lg bg-blue-600 py-1 font-bold text-white hover:bg-opacity-80 disabled:cursor-not-allowed dark:bg-blue-500 dark:hover:opacity-80"
                           onClick={(e) => handleFollow(e, user._id)}
                           disabled={loader}
                         >

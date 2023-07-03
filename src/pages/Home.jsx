@@ -1,10 +1,11 @@
 import { Tab } from "@headlessui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Post from "../components/Post";
 import NewPost from "../components/NewPost";
 import { useAuth } from "../context/AuthContext";
 import { useData } from "../context/DataContext";
 import Loader from "../components/Loader";
+import { getAllPosts } from "../services/postServices";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -13,8 +14,12 @@ function classNames(...classes) {
 export default function Home() {
   const [currCategory, setCurrCategory] = useState("Recent");
   const { user, token } = useAuth();
-  const { dataState, dataDispatch, dataLoader } = useData();
-  let postCategory = ["Recent", "Trending"];
+  const { dataState, dataDispatch, dataLoader, setDataLoader } = useData();
+  const postCategory = ["Recent", "Trending"];
+
+  useEffect(() => {
+    getAllPosts(token, dataDispatch, user, setDataLoader);
+  }, []);
 
   const handleCategory = (e) => {
     setCurrCategory(e.target.name);
