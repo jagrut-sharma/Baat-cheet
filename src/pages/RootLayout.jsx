@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import Nav from "../components/Nav";
 import NavSideBar from "../components/NavSideBar";
@@ -6,9 +6,10 @@ import RightSideBar from "../components/RightSideBar";
 import { Outlet } from "react-router-dom";
 import AutoScroll from "../components/AutoScroll";
 import { useAuth } from "../context/AuthContext";
+import { useData } from "../context/DataContext";
 
 export default function RootLayout() {
-  const [theme, setTheme] = useState(localStorage.getItem("theme"));
+  const { theme, setTheme } = useData();
   const { setHasLoggedOut } = useAuth();
 
   useEffect(() => {

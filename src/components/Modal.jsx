@@ -1,17 +1,14 @@
 /* eslint-disable react/prop-types */
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
-import {
-  BsFillEmojiHeartEyesFill,
-  BsFillImageFill,
-  BsFillPlusCircleFill,
-} from "react-icons/bs";
+import { BsFillImageFill, BsFillPlusCircleFill } from "react-icons/bs";
 import AvatarEle from "./AvatarEle";
 import { useData } from "../context/DataContext";
 import { useAuth } from "../context/AuthContext";
 import { createNewPost, editPost } from "../services/postServices";
 import { useMedia } from "../hooks/useMedia";
 import { ClipLoader } from "react-spinners";
+import EmojiPopover from "./EmojiPopover";
 
 export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
   const [post, setPost] = useState(contents?.content || "");
@@ -77,6 +74,11 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
     setPostPic("");
   };
 
+  const addEmoji = (emojiData) => {
+    setPost((prev) => prev + emojiData.emoji);
+    console.log(post + emojiData.emoji);
+  };
+
   return (
     <>
       <div
@@ -135,7 +137,7 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-gray-50 text-left align-middle transition-all dark:bg-gray-600">
+                <Dialog.Panel className="fixed left-[50%] top-[20%] w-full max-w-md translate-x-[-50%] transform overflow-hidden rounded-lg bg-gray-50 text-left align-middle transition-all dark:bg-gray-600">
                   <Dialog.Title
                     as="h3"
                     className="p-3 py-2 text-lg font-medium leading-6 text-gray-900 dark:text-slate-50"
@@ -203,13 +205,7 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
                             />
                           </div>
 
-                          <button
-                            type="button"
-                            className="rounded-full p-2 text-orange-400 hover:bg-blue-200"
-                            disabled={loader}
-                          >
-                            <BsFillEmojiHeartEyesFill size={"1.2rem"} />
-                          </button>
+                          <EmojiPopover handleEmojiClick={addEmoji} />
                         </div>
 
                         <button

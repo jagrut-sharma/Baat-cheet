@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import AvatarEle from "./AvatarEle";
-import { BsFillEmojiHeartEyesFill, BsFillImageFill } from "react-icons/bs";
+import { BsFillImageFill } from "react-icons/bs";
 import { createNewPost } from "../services/postServices";
 import { useMedia } from "../hooks/useMedia";
 import { ClipLoader } from "react-spinners";
+import EmojiPopover from "./EmojiPopover";
 
 export default function NewPost({ user, token, dataDispatch }) {
   const [post, setPost] = useState("");
@@ -40,6 +41,11 @@ export default function NewPost({ user, token, dataDispatch }) {
 
   const handleRemoveImage = () => {
     setPostPic("");
+  };
+
+  const addEmoji = (emojiData) => {
+    setPost((prev) => prev + emojiData.emoji);
+    console.log(post + emojiData.emoji);
   };
 
   return (
@@ -99,12 +105,7 @@ export default function NewPost({ user, token, dataDispatch }) {
             />
           </div>
 
-          <button
-            type="button"
-            className="rounded-full p-2 text-orange-400 hover:bg-blue-200"
-          >
-            <BsFillEmojiHeartEyesFill size={"1.2rem"} />
-          </button>
+          <EmojiPopover handleEmojiClick={addEmoji} />
         </div>
         <button
           onClick={handleNewPost}

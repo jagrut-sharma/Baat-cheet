@@ -12,11 +12,14 @@ const DataContext = createContext({
   dataDispatch: () => {},
   dataLoader: null,
   setDataLoader: () => {},
+  theme: null,
+  setTheme: () => {},
 });
 
 export const DataProvider = ({ children }) => {
   const [dataState, dataDispatch] = useImmerReducer(dataReducer, initialData);
   const [dataLoader, setDataLoader] = useState(false);
+  const [theme, setTheme] = useState(localStorage.getItem("theme"));
   const { token, user } = useAuth();
 
   useEffect(() => {
@@ -31,6 +34,8 @@ export const DataProvider = ({ children }) => {
     dataDispatch,
     dataLoader,
     setDataLoader,
+    theme,
+    setTheme,
   };
 
   return (
