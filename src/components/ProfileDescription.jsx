@@ -49,8 +49,6 @@ export default function ProfileDescription({ user, isFollowing }) {
     setLoader(false);
   };
 
-  console.log(loggedUser);
-
   return (
     <div className="mb-4 w-[100%] rounded border border-gray-200 bg-gray-50 px-4 py-4 shadow dark:border-gray-600 dark:bg-gray-700">
       <div className="flex items-center justify-between">

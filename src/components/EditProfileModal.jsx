@@ -40,7 +40,7 @@ export default function EditProfileModal() {
 
   const handleUpdateProfile = async () => {
     setLoader(true);
-    console.log("Updating Profile");
+
     const res = await updateProfile(token, userDetails, setLoader);
     if (res.status === 200) {
       const resUser = await getUserDetails(
@@ -49,7 +49,7 @@ export default function EditProfileModal() {
         dataDispatch,
         setLoader
       );
-      console.log(resUser);
+
       setUser(resUser);
       localStorage.setItem("user", JSON.stringify(resUser));
       getAllPosts(token, dataDispatch, user);
@@ -61,7 +61,9 @@ export default function EditProfileModal() {
   const handleUploadChange = async (e) => {
     setLoader(true);
     const file = e.target.files[0];
-    await uploadMedia(file, setUserDetails);
+    await uploadMedia(file, (url) =>
+      setUserDetails((prev) => ({ ...prev, pic: url }))
+    );
     setLoader(false);
     e.target.value = null;
   };

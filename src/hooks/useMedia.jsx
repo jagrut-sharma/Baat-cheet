@@ -2,7 +2,7 @@ import { toast } from "react-toastify";
 import { toastConfig } from "../utils/constants";
 
 function useMedia() {
-  const uploadMedia = async (media, setUserDetails) => {
+  const uploadMedia = async (media, updatePic) => {
     const mediaType = media.type.split("/")[0];
     if (mediaType === "video" && Math.round(media.size / 1024000) > 10)
       toast.error("Video size should be less than 10MB", toastConfig);
@@ -32,8 +32,7 @@ function useMedia() {
       await fetch(url, requestOptions)
         .then((response) => response.json())
         .then((json) => {
-          setUserDetails((prev) => ({ ...prev, pic: json.url }));
-          console.log(json.url);
+          updatePic(json.url);
           return [json.secure_url];
         })
         .catch((error) => {

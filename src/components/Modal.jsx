@@ -10,21 +10,28 @@ import AvatarEle from "./AvatarEle";
 import { useData } from "../context/DataContext";
 import { useAuth } from "../context/AuthContext";
 import { createNewPost, editPost } from "../services/postServices";
+import { useMedia } from "../hooks/useMedia";
+import { ClipLoader } from "react-spinners";
 
 export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
   const [post, setPost] = useState(contents?.content || "");
+  const [postPic, setPostPic] = useState(contents?.imgURL || "");
   const [loader, setLoader] = useState(false);
+  const [imgLoader, setImgLoader] = useState(false);
   const { dataDispatch } = useData();
   const { token, user } = useAuth();
+  const { uploadMedia } = useMedia();
 
   const handleNewPost = async (e) => {
-    setLoader(true);
     e.preventDefault();
+    setLoader(true);
     const postDetails = {
       content: post,
+      imgURL: postPic,
     };
     createNewPost(token, dataDispatch, postDetails, user);
     setPost("");
+    setPostPic("");
     setLoader(false);
     closeModal();
   };
@@ -35,8 +42,9 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
     const postID = contents._id;
     const postDetails = {
       content: post,
+      imgURL: postPic,
     };
-    const newContent = { ...contents, content: post };
+    const newContent = { ...contents, content: post, imgURL: postPic };
     await editPost(token, dataDispatch, postDetails, postID, newContent);
     setPost(post);
     setLoader(false);
@@ -49,6 +57,7 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
 
   function closeModal() {
     setPost(contents?.content || "");
+    setPostPic(contents?.imgURL || "");
     setIsOpen(false);
   }
 
@@ -56,7 +65,17 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
     setIsOpen(true);
   }
 
-  // console.log(contents);
+  const handleImageUpload = async (e) => {
+    setImgLoader(true);
+    const file = e.target.files[0];
+    await uploadMedia(file, (url) => setPostPic(url));
+    setImgLoader(false);
+    e.target.value = null;
+  };
+
+  const handleRemoveImage = () => {
+    setPostPic("");
+  };
 
   return (
     <>
@@ -119,43 +138,71 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
                 <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-gray-50 text-left align-middle transition-all dark:bg-gray-600">
                   <Dialog.Title
                     as="h3"
-                    className="p-3 text-lg font-medium leading-6 text-gray-900 dark:text-slate-50"
+                    className="p-3 py-2 text-lg font-medium leading-6 text-gray-900 dark:text-slate-50"
                   >
                     {isEditing ? "Edit Post" : "New Post"}
                   </Dialog.Title>
                   <div className="">
-                    <form className="mb-4 rounded-md bg-gray-50 dark:bg-gray-600">
-                      <div className="flex border-b border-b-gray-300 dark:border-b-gray-500">
-                        <div className="m-2">
-                          <AvatarEle
-                            imgLink={user?.pic}
-                            firstName={user?.firstName}
-                            lastName={user?.lastName}
-                          />
+                    <form className="rounded-md bg-gray-50 dark:bg-gray-600">
+                      <div className=" border-b border-b-gray-300 dark:border-b-gray-500">
+                        <div className="flex">
+                          <div className="m-2">
+                            <AvatarEle
+                              imgLink={user?.pic}
+                              firstName={user?.firstName}
+                              lastName={user?.lastName}
+                            />
+                          </div>
+
+                          <textarea
+                            name="post"
+                            placeholder="What's up?"
+                            id="post"
+                            cols="30"
+                            rows="8"
+                            className="w-full resize-none bg-gray-50 p-3 font-OpenSans outline-none disabled:cursor-not-allowed dark:bg-gray-600 dark:text-slate-50"
+                            value={post}
+                            onChange={handleChange}
+                            disabled={loader}
+                          ></textarea>
                         </div>
 
-                        <textarea
-                          name="post"
-                          placeholder="What's up?"
-                          id="post"
-                          cols="30"
-                          rows="8"
-                          className="w-full resize-none bg-gray-50 p-3 font-OpenSans outline-none disabled:cursor-not-allowed dark:bg-gray-600 dark:text-slate-50"
-                          value={post}
-                          onChange={handleChange}
-                          disabled={loader}
-                        ></textarea>
+                        {imgLoader && (
+                          <ClipLoader color="#3b82f6" className="mb-2 ml-4" />
+                        )}
+
+                        {postPic && (
+                          <div className="mb-2 ml-4 w-[8rem]">
+                            <img src={postPic} className="object-contain" />
+                            <button
+                              className="w-full bg-gray-300"
+                              onClick={handleRemoveImage}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <div className="ml-4 flex gap-4">
-                          <button
-                            type="button"
-                            className="rounded-full p-2 text-blue-700 hover:bg-blue-200 dark:text-blue-500"
-                            disabled={loader}
-                          >
-                            <BsFillImageFill size={"1.2rem"} />
-                          </button>
+                        <div className="ml-4 flex items-center gap-4">
+                          <div className="rounded-full hover:bg-blue-200">
+                            <label
+                              htmlFor="picMod"
+                              className="block cursor-pointer rounded-full p-2 text-blue-700 dark:text-blue-500"
+                            >
+                              <BsFillImageFill size={"1.2rem"} />
+                            </label>
+                            <input
+                              type="file"
+                              name="picMod"
+                              id="picMod"
+                              className="hidden"
+                              accept="image/*"
+                              onChange={handleImageUpload}
+                            />
+                          </div>
+
                           <button
                             type="button"
                             className="rounded-full p-2 text-orange-400 hover:bg-blue-200"
@@ -164,6 +211,7 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
                             <BsFillEmojiHeartEyesFill size={"1.2rem"} />
                           </button>
                         </div>
+
                         <button
                           onClick={contents ? handleEditPost : handleNewPost}
                           className="m-2 rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 disabled:cursor-not-allowed disabled:opacity-80 dark:bg-blue-500 dark:hover:opacity-80"
