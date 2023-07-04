@@ -34,6 +34,12 @@ export const dataReducer = (draft, action) => {
       draft.profilePosts = draft.profilePosts.map((post) =>
         post._id === newPost._id ? newPost : post
       );
+      draft.likedPosts = draft.likedPosts.map((post) =>
+        post._id === newPost._id ? newPost : post
+      );
+      draft.bookmarkedPosts = draft.bookmarkedPosts.map((post) =>
+        post._id === newPost._id ? newPost : post
+      );
       break;
     }
 
