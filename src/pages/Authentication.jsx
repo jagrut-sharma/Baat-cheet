@@ -21,8 +21,15 @@ export default function Authentication() {
     register: false,
   });
 
-  const { token, setAuthLoader, authLoader, setToken, setUser, hasLoggedOut } =
-    useAuth();
+  const {
+    token,
+    setAuthLoader,
+    authLoader,
+    setToken,
+    setUser,
+    hasLoggedOut,
+    setContentLoader,
+  } = useAuth();
   // const navigate = useNavigate();
   const location = useLocation();
 
@@ -94,6 +101,7 @@ export default function Authentication() {
         guest: false,
         register: false,
       });
+      setContentLoader(false);
     }
   };
 

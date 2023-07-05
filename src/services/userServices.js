@@ -14,8 +14,6 @@ export const getAllUsers = async (token) => {
   } = res;
 
   return users;
-
-  // dataDispatch({ type: ACTIONS.FETCH_ALL_USERS, payload: users });
 };
 
 export const getUserDetails = async (
@@ -75,7 +73,6 @@ export const followUser = async (
     );
 
     if (res.status === 200) {
-      // test
       const resUser = await getUserDetails(
         token,
         loggeduserID,
@@ -140,8 +137,6 @@ export const updateProfile = async (token, updates, setLoader) => {
         Authorization: token,
       },
     });
-
-    console.log(updates);
 
     return res;
     // need to update user => profile

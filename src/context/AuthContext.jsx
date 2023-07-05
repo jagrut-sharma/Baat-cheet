@@ -46,6 +46,7 @@ export const AuthProvider = function ({ children }) {
     hasLoggedOut,
     setHasLoggedOut,
     contentLoader,
+    setContentLoader,
   };
 
   return (
