@@ -12,6 +12,7 @@ import DropdownEditProfile from "./DropdownEditProfile";
 import { useMedia } from "../hooks/useMedia";
 import { getAllPosts } from "../services/postServices";
 import AvatarSelectModal from "./AvatarSelectModal";
+import { ACTIONS } from "../utils/constants";
 
 export default function EditProfileModal() {
   let [isOpen, setIsOpen] = useState(false);
@@ -50,6 +51,8 @@ export default function EditProfileModal() {
         setLoader
       );
 
+      dataDispatch({ type: ACTIONS.FETCH_PROFILE_DETAILS, payload: resUser });
+      dataDispatch({ type: ACTIONS.EDIT_PROFILE, payload: resUser });
       setUser(resUser);
       localStorage.setItem("user", JSON.stringify(resUser));
       getAllPosts(token, dataDispatch, user);

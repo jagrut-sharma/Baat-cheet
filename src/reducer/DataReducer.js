@@ -90,6 +90,27 @@ export const dataReducer = (draft, action) => {
       break;
     }
 
+    case ACTIONS.EDIT_PROFILE: {
+      const newAuthor = {
+        _id: action.payload._id,
+        firstName: action.payload.firstName,
+        lastName: action.payload.lastName,
+        username: action.payload.username,
+        pic: action.payload.pic,
+      };
+
+      draft.profilePosts = draft.profilePosts.map((post) => ({
+        ...post,
+        author: newAuthor,
+      }));
+      break;
+    }
+
+    case ACTIONS.USER_FOLLOW_UNFOLLOW: {
+      draft.profileDetails = action.payload;
+      break;
+    }
+
     default:
       break;
   }

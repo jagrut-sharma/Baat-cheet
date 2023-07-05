@@ -34,7 +34,7 @@ export default function GuestProfile() {
       getSingleUserPosts(token, userID, dataDispatch, setPostLoader);
     }
     fetchData();
-  }, [userID, user]);
+  }, [userID]);
 
   const followingPeoplesID = user.following.map(({ _id }) => _id);
 

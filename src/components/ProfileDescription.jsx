@@ -5,9 +5,15 @@ import EditProfileModal from "./EditProfileModal";
 import { useAuth } from "../context/AuthContext";
 import { logoutHandler } from "../services/authServices";
 import { useState } from "react";
-import { followUser, unfollowUser } from "../services/userServices";
+import {
+  followUser,
+  getUserDetails,
+  unfollowUser,
+} from "../services/userServices";
 import { useData } from "../context/DataContext";
 import * as Separator from "@radix-ui/react-separator";
+import { ACTIONS } from "../utils/constants";
+import HoverData from "./HoverData";
 
 export default function ProfileDescription({ user, isFollowing }) {
   const {
@@ -46,6 +52,13 @@ export default function ProfileDescription({ user, isFollowing }) {
         setUser
       );
     }
+    const profileUser = await getUserDetails(
+      token,
+      user._id,
+      dataDispatch,
+      setLoader
+    );
+    dataDispatch({ type: ACTIONS.USER_FOLLOW_UNFOLLOW, payload: profileUser });
     setLoader(false);
   };
 
@@ -115,12 +128,9 @@ export default function ProfileDescription({ user, isFollowing }) {
       <Separator.Root className="my-[1rem] self-start bg-gray-300 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-[100%] data-[orientation=vertical]:w-px dark:bg-gray-600 md:order-1 md:block" />
 
       <div className="flex justify-evenly font-Poppins dark:text-gray-50">
-        <p>
-          <span className="mr-2">{user.followers.length}</span>Followers
-        </p>
-        <p>
-          <span className="mr-2">{user.following.length}</span>Following
-        </p>
+        <HoverData list={user.followers} followers />
+
+        <HoverData list={user.following} />
       </div>
     </div>
   );

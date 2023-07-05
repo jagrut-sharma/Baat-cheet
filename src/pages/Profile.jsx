@@ -1,32 +1,18 @@
-import { useEffect, useState } from "react";
-import Post from "../components/Post";
-import ProfileDescription from "../components/ProfileDescription";
+import { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useData } from "../context/DataContext";
-import { getSingleUserPosts } from "../services/postServices";
-import Loader from "../components/Loader";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
-  const [profileLoader, setProfileLoader] = useState(false);
-  const {
-    dataState: { userPosts },
-    dataDispatch,
-  } = useData();
-  const { user, token } = useAuth();
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    getSingleUserPosts(token, user._id, dataDispatch, setProfileLoader, true);
+    navigate(`/profile/${user._id}`);
   }, []);
 
   return (
     <>
-      <ProfileDescription user={user} />
-
-      {profileLoader ? (
-        <Loader loadingState={profileLoader} />
-      ) : (
-        userPosts.map((post) => <Post key={post._id} post={post} />)
-      )}
+      <h1>Navigating to Profile..</h1>
     </>
   );
 }

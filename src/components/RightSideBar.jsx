@@ -4,8 +4,9 @@ import { useData } from "../context/DataContext";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { followUser } from "../services/userServices";
+import { followUser, getUserDetails } from "../services/userServices";
 import Loader from "./Loader";
+import { ACTIONS } from "../utils/constants";
 
 export default function RightSideBar() {
   const [loader, setLoader] = useState(false);
@@ -38,6 +39,14 @@ export default function RightSideBar() {
       userID,
       setUser
     );
+
+    const profileUser = await getUserDetails(
+      token,
+      userID,
+      dataDispatch,
+      setLoader
+    );
+    dataDispatch({ type: ACTIONS.USER_FOLLOW_UNFOLLOW, payload: profileUser });
     setLoader(false);
   };
 
