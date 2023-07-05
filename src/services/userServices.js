@@ -37,7 +37,9 @@ export const getUserDetails = async (
   setProfileLoader
 ) => {
   try {
-    setProfileLoader(true);
+    if (setProfileLoader) {
+      setProfileLoader(true);
+    }
     const res = await axios.get(`${baseURL}/api/user/${userID}`, {
       headers: {
         Authorization: token,
@@ -48,10 +50,14 @@ export const getUserDetails = async (
       data: { user },
     } = res;
 
-    setProfileLoader(false);
+    if (setProfileLoader) {
+      setProfileLoader(false);
+    }
     return user;
   } catch (err) {
-    setProfileLoader(false);
+    if (setProfileLoader) {
+      setProfileLoader(false);
+    }
     console.log(err);
     const errRes = err?.response?.data?.message ?? "";
     const errMsg = err?.response?.data?.error ?? "";

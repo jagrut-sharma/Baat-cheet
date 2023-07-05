@@ -6,6 +6,10 @@ import AuthForm from "../components/AuthForm";
 import Nav from "../components/Nav";
 import { loginHandler, signupHandler } from "../services/authServices";
 import { useImmer } from "use-immer";
+import { toast } from "react-toastify";
+import jwt_decode from "jwt-decode";
+import { errorToastConfig, toastConfig } from "../utils/constants";
+import { getUserDetails } from "../services/userServices";
 
 export default function Authentication() {
   const [error, setError] = useState(null);
@@ -53,25 +57,43 @@ export default function Authentication() {
     }
   }, [theme]);
 
-  const handleFormSubmit = (formValue) => {
-    if (mode === "register") {
-      signupHandler(
-        setAuthLoader,
-        baseURL,
-        formValue,
-        setToken,
-        setUser,
-        setButtonLoader
-      );
-    } else {
-      loginHandler(
-        setAuthLoader,
-        baseURL,
-        formValue,
-        setToken,
-        setUser,
-        setButtonLoader
-      );
+  const handleFormSubmit = async (formValue) => {
+    try {
+      setAuthLoader(true);
+      let token;
+      if (mode === "register") {
+        token = await signupHandler(baseURL, formValue);
+      } else {
+        token = await loginHandler(baseURL, formValue);
+      }
+
+      const { _id: userID } = jwt_decode(token);
+
+      const userRes = await getUserDetails(token, userID);
+
+      setUser(userRes);
+      setToken(token);
+      localStorage.setItem("user", JSON.stringify(userRes));
+      localStorage.setItem("token", token);
+
+      if (mode === "register") {
+        toast.success("Registered User", toastConfig);
+      } else {
+        toast.success("Logged In", toastConfig);
+      }
+    } catch (err) {
+      console.log(err);
+      const errRes = err?.response?.data?.message ?? "";
+      const errMsg = err?.response?.data?.error ?? "";
+      console.log(`${err.response.status}:${errRes} ${errMsg}`);
+      toast.error(`${errRes} ${errMsg}`, errorToastConfig);
+    } finally {
+      setAuthLoader(false);
+      setButtonLoader({
+        login: false,
+        guest: false,
+        register: false,
+      });
     }
   };
 
