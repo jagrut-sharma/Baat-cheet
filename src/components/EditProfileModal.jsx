@@ -10,7 +10,7 @@ import { getUserDetails, updateProfile } from "../services/userServices";
 import AvatarEle from "./AvatarEle";
 import DropdownEditProfile from "./DropdownEditProfile";
 import { useMedia } from "../hooks/useMedia";
-import { getAllPosts } from "../services/postServices";
+import { getAllPosts, getLikedPosts } from "../services/postServices";
 import AvatarSelectModal from "./AvatarSelectModal";
 import { ACTIONS } from "../utils/constants";
 
@@ -55,7 +55,12 @@ export default function EditProfileModal() {
       dataDispatch({ type: ACTIONS.EDIT_PROFILE, payload: resUser });
       setUser(resUser);
       localStorage.setItem("user", JSON.stringify(resUser));
-      getAllPosts(token, dataDispatch, user);
+
+      const allPosts = await getAllPosts(token);
+      dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+      const likedPosts = getLikedPosts(allPosts, user);
+      dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+
       setIsOpen(false);
     }
     setLoader(false);

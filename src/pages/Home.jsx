@@ -5,7 +5,8 @@ import NewPost from "../components/NewPost";
 import { useAuth } from "../context/AuthContext";
 import { useData } from "../context/DataContext";
 import Loader from "../components/Loader";
-import { getAllPosts } from "../services/postServices";
+import { getAllPosts, getLikedPosts } from "../services/postServices";
+import { ACTIONS } from "../utils/constants";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -18,7 +19,21 @@ export default function Home() {
   const postCategory = ["Recent", "Trending"];
 
   useEffect(() => {
-    getAllPosts(token, dataDispatch, user, setDataLoader);
+    async function fetchPosts() {
+      try {
+        setDataLoader(true);
+        const allPosts = await getAllPosts(token);
+        dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+        const likedPosts = getLikedPosts(allPosts, user);
+        dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setDataLoader(false);
+      }
+    }
+
+    fetchPosts();
   }, []);
 
   const handleCategory = (e) => {

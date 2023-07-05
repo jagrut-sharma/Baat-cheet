@@ -23,6 +23,11 @@ export const dataReducer = (draft, action) => {
       break;
     }
 
+    case ACTIONS.INITIALIZE_BOOKMARK_ID: {
+      draft.bookmarkedPostsID = action.payload;
+      break;
+    }
+
     case ACTIONS.EDIT_POST: {
       const newPost = action.payload;
       draft.allPosts = draft.allPosts.map((post) =>

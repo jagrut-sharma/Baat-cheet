@@ -7,10 +7,11 @@ import { Outlet } from "react-router-dom";
 import AutoScroll from "../components/AutoScroll";
 import { useAuth } from "../context/AuthContext";
 import { useData } from "../context/DataContext";
+import Loader from "../components/Loader";
 
 export default function RootLayout() {
   const { theme, setTheme } = useData();
-  const { setHasLoggedOut } = useAuth();
+  const { setHasLoggedOut, contentLoader } = useAuth();
 
   useEffect(() => {
     setHasLoggedOut(false);
@@ -42,12 +43,16 @@ export default function RootLayout() {
   return (
     <div className="relative grid min-h-[100dvh] grid-rows-rootLayout  scroll-smooth bg-gray-200 font-OpenSans dark:bg-gray-800">
       <Nav theme={theme} setTheme={setTheme} />
-      <div className="relative grid grid-cols-responsiveOutlet grid-rows-responsiveOutlet md:grid-cols-rootlgColLayout md:grid-rows-outlet lg:grid-cols-rootColLayout">
-        <NavSideBar />
-        <AutoScroll />
-        <Outlet />
-        <RightSideBar />
-      </div>
+      {contentLoader ? (
+        <Loader loadingState={contentLoader} />
+      ) : (
+        <div className="relative grid grid-cols-responsiveOutlet grid-rows-responsiveOutlet md:grid-cols-rootlgColLayout md:grid-rows-outlet lg:grid-cols-rootColLayout">
+          <NavSideBar />
+          <AutoScroll />
+          <Outlet />
+          <RightSideBar />
+        </div>
+      )}
     </div>
   );
 }

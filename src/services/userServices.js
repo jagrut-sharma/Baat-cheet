@@ -1,33 +1,21 @@
 import axios from "axios";
-import { ACTIONS, baseURL, toastConfig } from "../utils/constants";
+import { baseURL, toastConfig } from "../utils/constants";
 import { toast } from "react-toastify";
 
-export const getAllUsers = async (token, dataDispatch, setLoader) => {
-  try {
-    if (setLoader) {
-      setLoader(true);
-    }
-    const res = await axios.get(`${baseURL}/api/user`, {
-      headers: {
-        Authorization: token,
-      },
-    });
+export const getAllUsers = async (token) => {
+  const res = await axios.get(`${baseURL}/api/user`, {
+    headers: {
+      Authorization: token,
+    },
+  });
 
-    const {
-      data: { users },
-    } = res;
+  const {
+    data: { users },
+  } = res;
 
-    if (setLoader) {
-      setLoader(false);
-    }
-    dataDispatch({ type: ACTIONS.FETCH_ALL_USERS, payload: users });
-  } catch (err) {
-    setLoader(false);
-    console.log(err);
-    const errRes = err?.response?.data?.message ?? "";
-    const errMsg = err?.response?.data?.error ?? "";
-    console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
-  }
+  return users;
+
+  // dataDispatch({ type: ACTIONS.FETCH_ALL_USERS, payload: users });
 };
 
 export const getUserDetails = async (

@@ -2,32 +2,18 @@ import axios from "axios";
 import { ACTIONS, baseURL } from "../utils/constants";
 import { getAllUsers } from "./userServices";
 
-export const getAllPosts = async (token, dataDispatch, user, setLoader) => {
-  try {
-    if (setLoader) {
-      setLoader(true);
-    }
-    const res = await axios.get(`${baseURL}/api/post`, {
-      headers: {
-        Authorization: token,
-      },
-    });
+export const getAllPosts = async (token) => {
+  const res = await axios.get(`${baseURL}/api/post`, {
+    headers: {
+      Authorization: token,
+    },
+  });
 
-    const {
-      data: { posts },
-    } = res;
+  const {
+    data: { posts },
+  } = res;
 
-    if (setLoader) {
-      setLoader(false);
-    }
-    dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: posts });
-    getLikedPosts(posts, dataDispatch, user);
-  } catch (err) {
-    if (setLoader) {
-      setLoader(false);
-    }
-    console.log(err);
-  }
+  return posts;
 };
 
 export const createNewPost = async (token, dispatch, post, user) => {
@@ -38,7 +24,11 @@ export const createNewPost = async (token, dispatch, post, user) => {
       },
     });
 
-    getAllPosts(token, dispatch, user);
+    const allPosts = await getAllPosts(token);
+    dispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+    const likedPosts = getLikedPosts(allPosts, user);
+    dispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+
     getSingleUserPosts(token, user._id, dispatch);
   } catch (err) {
     console.log(err);
@@ -128,12 +118,12 @@ export const getSingleUserPosts = async (
   }
 };
 
-const getLikedPosts = (allPosts, dispatch, user) => {
+export const getLikedPosts = (allPosts, user) => {
   const userID = user._id;
   const likedPosts = allPosts.filter((post) =>
     post.likes.likedBy.includes(userID)
   );
-  dispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+  return likedPosts;
 };
 
 export const likePost = async (
@@ -157,7 +147,11 @@ export const likePost = async (
       }
     );
 
-    getAllPosts(token, dispatch, user, setPostLoader);
+    const allPosts = await getAllPosts(token);
+    dispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+    const likedPosts = getLikedPosts(allPosts, user);
+    dispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+
     return res;
   } catch (err) {
     setPostLoader(false);
@@ -189,7 +183,11 @@ export const dislikePost = async (
       }
     );
 
-    getAllPosts(token, dispatch, user, setPostLoader);
+    const allPosts = await getAllPosts(token);
+    dispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+    const likedPosts = getLikedPosts(allPosts, user);
+    dispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+
     return res;
   } catch (err) {
     setPostLoader(false);
@@ -213,7 +211,8 @@ export const bookmarkPost = async (postID, token, dispatch, setPostLoader) => {
       }
     );
 
-    getAllUsers(token, dispatch, setPostLoader);
+    const allUsers = await getAllUsers(token);
+    dispatch({ type: ACTIONS.FETCH_ALL_USERS, payload: allUsers });
     setPostLoader(false);
   } catch (err) {
     setPostLoader(false);
@@ -242,7 +241,9 @@ export const unbookmarkPost = async (
       type: ACTIONS.REMOVE_BOOKMARK_POST,
       payload: postID,
     });
-    getAllUsers(token, dispatch, setPostLoader);
+
+    const allUsers = await getAllUsers(token);
+    dispatch({ type: ACTIONS.FETCH_ALL_USERS, payload: allUsers });
     setPostLoader(false);
   } catch (err) {
     setPostLoader(false);

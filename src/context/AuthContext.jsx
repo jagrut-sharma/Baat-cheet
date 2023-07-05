@@ -1,6 +1,8 @@
 /* eslint-disable react/prop-types */
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useImmer } from "use-immer";
+import { getUserDetails } from "../services/userServices";
+import jwt_decode from "jwt-decode";
 
 const AuthContext = createContext({
   token: null,
@@ -11,13 +13,28 @@ const AuthContext = createContext({
   setAuthLoader: () => {},
   hasLoggedOut: null,
   setHasLoggedOut: () => {},
+  contentLoader: null,
 });
 
 export const AuthProvider = function ({ children }) {
   const [token, setToken] = useState(localStorage.getItem("token"));
-  const [user, setUser] = useImmer(JSON.parse(localStorage.getItem("user")));
+  const [user, setUser] = useImmer(null);
   const [authLoader, setAuthLoader] = useState(false);
+  const [contentLoader, setContentLoader] = useState(true);
   const [hasLoggedOut, setHasLoggedOut] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      setContentLoader(true);
+      const { _id: userID } = jwt_decode(token);
+      const res = await getUserDetails(token, userID);
+      setUser(res);
+      setContentLoader(false);
+    }
+    if (token) {
+      fetchData();
+    }
+  }, []);
 
   const authContext = {
     token,
@@ -28,6 +45,7 @@ export const AuthProvider = function ({ children }) {
     setAuthLoader,
     hasLoggedOut,
     setHasLoggedOut,
+    contentLoader,
   };
 
   return (
