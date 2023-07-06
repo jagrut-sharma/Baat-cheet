@@ -12,7 +12,7 @@ import AvatarEle from "./AvatarEle";
 import Dropdown from "./Dropdown";
 import { getHumanizeTimeForOlderPost } from "../utils/helperFunctions";
 import { useAuth } from "../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useState } from "react";
 import {
   bookmarkPost,
@@ -32,6 +32,7 @@ export default function Post({ post, fromProfilePost, fromBookmark }) {
   const { user, token } = useAuth();
   const { dataState, dataDispatch } = useData();
   const [postLoader, setPostLoader] = useState(false);
+  const { userID } = useParams();
 
   let isLiked;
 
@@ -61,7 +62,7 @@ export default function Post({ post, fromProfilePost, fromBookmark }) {
       dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
 
       if (res.status === 200 && fromProfilePost) {
-        const userPosts = await getSingleUserPosts(token, user._id);
+        const userPosts = await getSingleUserPosts(token, userID);
         dataDispatch({
           type: ACTIONS.FETCH_PROFILE_POST,
           payload: userPosts,
