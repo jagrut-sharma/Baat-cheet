@@ -14,14 +14,15 @@ function classNames(...classes) {
 
 export default function Home() {
   const [currCategory, setCurrCategory] = useState("Recent");
+  const [loader, setLoader] = useState(false);
   const { user, token } = useAuth();
-  const { dataState, dataDispatch, dataLoader, setDataLoader } = useData();
+  const { dataState, dataDispatch } = useData();
   const postCategory = ["Recent", "Trending"];
 
   useEffect(() => {
     async function fetchPosts() {
       try {
-        setDataLoader(true);
+        setLoader(true);
         const allPosts = await getAllPosts(token);
         dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
         const likedPosts = getLikedPosts(allPosts, user);
@@ -29,7 +30,7 @@ export default function Home() {
       } catch (err) {
         console.log(err);
       } finally {
-        setDataLoader(false);
+        setLoader(false);
       }
     }
 
@@ -87,8 +88,8 @@ export default function Home() {
 
         <NewPost user={user} token={token} dataDispatch={dataDispatch} />
 
-        {dataLoader ? (
-          <Loader loadingState={dataLoader} />
+        {loader ? (
+          <Loader loadingState={loader} />
         ) : (
           <>
             {sortedPosts.length === 0 && (
