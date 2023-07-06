@@ -16,7 +16,8 @@ import { useMedia } from "../hooks/useMedia";
 import { ClipLoader } from "react-spinners";
 import EmojiPopover from "./EmojiPopover";
 import { useParams } from "react-router-dom";
-import { ACTIONS, errProceedings } from "../utils/constants";
+import { ACTIONS, errProceedings, errorToastConfig } from "../utils/constants";
+import { toast } from "react-toastify";
 
 export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
   const [post, setPost] = useState(contents?.content || "");
@@ -32,6 +33,14 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
     e.preventDefault();
     try {
       setLoader(true);
+
+      if (post.trim().length === 0) {
+        toast.error("Enter text to make post", errorToastConfig);
+        setLoader(false);
+        setPost("");
+        return;
+      }
+
       const postDetails = {
         content: post,
         imgURL: postPic,
@@ -66,6 +75,14 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
 
     try {
       setLoader(true);
+
+      if (post.trim().length === 0) {
+        toast.error("Enter text to make post", errorToastConfig);
+        setLoader(false);
+        setPost("");
+        return;
+      }
+
       const postID = contents._id;
       const postDetails = {
         content: post,

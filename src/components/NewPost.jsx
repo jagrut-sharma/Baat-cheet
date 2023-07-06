@@ -10,7 +10,8 @@ import {
 import { useMedia } from "../hooks/useMedia";
 import { ClipLoader } from "react-spinners";
 import EmojiPopover from "./EmojiPopover";
-import { ACTIONS } from "../utils/constants";
+import { ACTIONS, errProceedings, errorToastConfig } from "../utils/constants";
+import { toast } from "react-toastify";
 
 export default function NewPost({ user, token, dataDispatch }) {
   const [post, setPost] = useState("");
@@ -20,23 +21,37 @@ export default function NewPost({ user, token, dataDispatch }) {
   const { uploadMedia } = useMedia();
 
   const handleNewPost = async (e) => {
-    setLoader(true);
     e.preventDefault();
-    const postDetails = {
-      content: post,
-      imgURL: postPic,
-    };
-    await createNewPost(token, postDetails);
 
-    const allPosts = await getAllPosts(token);
-    dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+    try {
+      setLoader(true);
 
-    const likedPosts = getLikedPosts(allPosts, user);
-    dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+      if (post.trim().length === 0) {
+        toast.error("Enter text to make post", errorToastConfig);
+        setLoader(false);
+        setPost("");
+        return;
+      }
 
-    setPost("");
-    setPostPic("");
-    setLoader(false);
+      const postDetails = {
+        content: post,
+        imgURL: postPic,
+      };
+      await createNewPost(token, postDetails);
+
+      const allPosts = await getAllPosts(token);
+      dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+
+      const likedPosts = getLikedPosts(allPosts, user);
+      dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+
+      setPost("");
+      setPostPic("");
+    } catch (err) {
+      errProceedings(err);
+    } finally {
+      setLoader(false);
+    }
   };
 
   const handleChange = (e) => {

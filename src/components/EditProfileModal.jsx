@@ -60,6 +60,7 @@ export default function EditProfileModal() {
         dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
 
         setIsOpen(false);
+        toast.info("Edited Profile", toastConfig);
       }
     } catch (err) {
       errProceedings(err);
