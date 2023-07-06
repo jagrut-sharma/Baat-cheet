@@ -7,7 +7,7 @@ import { getUserDetails } from "../services/userServices";
 import { getSingleUserPosts } from "../services/postServices";
 import Post from "../components/Post";
 import Loader from "../components/Loader";
-import { ACTIONS } from "../utils/constants";
+import { ACTIONS, errProceedings } from "../utils/constants";
 
 export default function GuestProfile() {
   const [profileLoader, setProfileLoader] = useState(true);
@@ -21,17 +21,27 @@ export default function GuestProfile() {
 
   useEffect(() => {
     async function fetchData() {
-      const fetchedUser = await getUserDetails(
-        token,
-        userID,
-        dataDispatch,
-        setProfileLoader
-      );
-      dataDispatch({
-        type: ACTIONS.FETCH_PROFILE_DETAILS,
-        payload: fetchedUser,
-      });
-      getSingleUserPosts(token, userID, dataDispatch, setPostLoader);
+      try {
+        setProfileLoader(true);
+        setPostLoader(true);
+        const fetchedUser = await getUserDetails(token, userID);
+        dataDispatch({
+          type: ACTIONS.FETCH_PROFILE_DETAILS,
+          payload: fetchedUser,
+        });
+        setProfileLoader(false);
+
+        const userPosts = await getSingleUserPosts(token, userID);
+        dataDispatch({
+          type: ACTIONS.FETCH_PROFILE_POST,
+          payload: userPosts,
+        });
+      } catch (err) {
+        errProceedings(err);
+      } finally {
+        setProfileLoader(false);
+        setPostLoader(false);
+      }
     }
     fetchData();
   }, [userID]);

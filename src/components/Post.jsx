@@ -17,14 +17,16 @@ import { useState } from "react";
 import {
   bookmarkPost,
   dislikePost,
+  getAllPosts,
   getBookmarks,
+  getLikedPosts,
   getSingleUserPosts,
   likePost,
   unbookmarkPost,
 } from "../services/postServices";
 import { useData } from "../context/DataContext";
-import { getUserDetails } from "../services/userServices";
-import { ACTIONS } from "../utils/constants";
+import { getAllUsers, getUserDetails } from "../services/userServices";
+import { ACTIONS, errProceedings } from "../utils/constants";
 
 export default function Post({ post, fromProfilePost, fromBookmark }) {
   const { user, token } = useAuth();
@@ -40,7 +42,6 @@ export default function Post({ post, fromProfilePost, fromBookmark }) {
     isLiked = post?.likes?.likedBy.includes(user._id);
   }
 
-  // const loggedUser = dataState?.allUsers.find(({ _id }) => _id === user._id);
   const isBookmarked = dataState.bookmarkedPostsID.includes(post._id);
 
   const handleLike = async () => {
@@ -49,35 +50,26 @@ export default function Post({ post, fromProfilePost, fromBookmark }) {
       let res;
 
       if (isLiked) {
-        res = await dislikePost(
-          token,
-          post._id,
-          setPostLoader,
-          user,
-          dataDispatch
-        );
+        res = await dislikePost(token, post._id);
       } else {
-        res = await likePost(
-          token,
-          post._id,
-          setPostLoader,
-          user,
-          dataDispatch
-        );
+        res = await likePost(token, post._id);
       }
 
-      setPostLoader(true);
+      const allPosts = await getAllPosts(token);
+      dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+      const likedPosts = getLikedPosts(allPosts, user);
+      dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+
       if (res.status === 200 && fromProfilePost) {
-        getSingleUserPosts(token, user._id, dataDispatch, setPostLoader);
+        const userPosts = await getSingleUserPosts(token, user._id);
+        dataDispatch({
+          type: ACTIONS.FETCH_PROFILE_POST,
+          payload: userPosts,
+        });
       }
 
       if (res.status === 200 && fromBookmark) {
-        const fetchedUser = await getUserDetails(
-          token,
-          user._id,
-          dataDispatch,
-          setPostLoader
-        );
+        const fetchedUser = await getUserDetails(token, user._id);
         setPostLoader(true);
         const resArr = await getBookmarks(token);
         dataDispatch({
@@ -88,32 +80,41 @@ export default function Post({ post, fromProfilePost, fromBookmark }) {
           },
         });
       }
-      setPostLoader(false);
     } catch (error) {
-      console.log(error);
+      errProceedings(error);
+    } finally {
+      setPostLoader(false);
     }
   };
 
   const handleBookmark = async () => {
-    if (isBookmarked) {
-      await unbookmarkPost(post._id, token, dataDispatch, setPostLoader);
-    } else {
-      await bookmarkPost(post._id, token, dataDispatch, setPostLoader);
-    }
+    try {
+      setPostLoader(true);
+      if (isBookmarked) {
+        await unbookmarkPost(post._id, token);
+      } else {
+        await bookmarkPost(post._id, token, dataDispatch, setPostLoader);
+        dataDispatch({
+          type: ACTIONS.REMOVE_BOOKMARK_POST,
+          payload: post._id,
+        });
+      }
 
-    const fetchedUser = await getUserDetails(
-      token,
-      user._id,
-      dataDispatch,
-      setPostLoader
-    );
-    setPostLoader(true);
-    const resArr = await getBookmarks(token);
-    dataDispatch({
-      type: ACTIONS.FETCH_BOOKMARK_POSTS,
-      payload: { bookmarksID: fetchedUser.bookmarks, bookmarksPost: resArr },
-    });
-    setPostLoader(false);
+      const allUsers = await getAllUsers(token);
+      dataDispatch({ type: ACTIONS.FETCH_ALL_USERS, payload: allUsers });
+
+      const fetchedUser = await getUserDetails(token, user._id);
+
+      const resArr = await getBookmarks(token);
+      dataDispatch({
+        type: ACTIONS.FETCH_BOOKMARK_POSTS,
+        payload: { bookmarksID: fetchedUser.bookmarks, bookmarksPost: resArr },
+      });
+    } catch (err) {
+      errProceedings(err);
+    } finally {
+      setPostLoader(false);
+    }
   };
 
   return (

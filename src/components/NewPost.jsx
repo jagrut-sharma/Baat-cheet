@@ -2,10 +2,15 @@
 import { useState } from "react";
 import AvatarEle from "./AvatarEle";
 import { BsFillImageFill } from "react-icons/bs";
-import { createNewPost } from "../services/postServices";
+import {
+  createNewPost,
+  getAllPosts,
+  getLikedPosts,
+} from "../services/postServices";
 import { useMedia } from "../hooks/useMedia";
 import { ClipLoader } from "react-spinners";
 import EmojiPopover from "./EmojiPopover";
+import { ACTIONS } from "../utils/constants";
 
 export default function NewPost({ user, token, dataDispatch }) {
   const [post, setPost] = useState("");
@@ -21,7 +26,14 @@ export default function NewPost({ user, token, dataDispatch }) {
       content: post,
       imgURL: postPic,
     };
-    await createNewPost(token, dataDispatch, postDetails, user);
+    await createNewPost(token, postDetails);
+
+    const allPosts = await getAllPosts(token);
+    dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+
+    const likedPosts = getLikedPosts(allPosts, user);
+    dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+
     setPost("");
     setPostPic("");
     setLoader(false);

@@ -12,7 +12,7 @@ import {
 } from "../services/userServices";
 import { useData } from "../context/DataContext";
 import * as Separator from "@radix-ui/react-separator";
-import { ACTIONS } from "../utils/constants";
+import { ACTIONS, errProceedings } from "../utils/constants";
 import HoverData from "./HoverData";
 
 export default function ProfileDescription({ user, isFollowing }) {
@@ -32,34 +32,30 @@ export default function ProfileDescription({ user, isFollowing }) {
   };
 
   const handleFollow = async () => {
-    setLoader(true);
-    if (isFollowing) {
-      await unfollowUser(
-        user._id,
-        token,
-        dataDispatch,
-        setLoader,
-        loggedUser._id,
-        setUser
-      );
-    } else {
-      await followUser(
-        user._id,
-        token,
-        dataDispatch,
-        setLoader,
-        loggedUser._id,
-        setUser
-      );
+    try {
+      setLoader(true);
+      let res;
+      if (isFollowing) {
+        res = await unfollowUser(user._id, token);
+      } else {
+        res = await followUser(user._id, token);
+      }
+
+      if (res.status === 200) {
+        const resUser = await getUserDetails(token, loggedUser._id);
+        setUser(resUser);
+      }
+
+      const profileUser = await getUserDetails(token, user._id);
+      dataDispatch({
+        type: ACTIONS.USER_FOLLOW_UNFOLLOW,
+        payload: profileUser,
+      });
+    } catch (err) {
+      errProceedings(err);
+    } finally {
+      setLoader(false);
     }
-    const profileUser = await getUserDetails(
-      token,
-      user._id,
-      dataDispatch,
-      setLoader
-    );
-    dataDispatch({ type: ACTIONS.USER_FOLLOW_UNFOLLOW, payload: profileUser });
-    setLoader(false);
   };
 
   return (

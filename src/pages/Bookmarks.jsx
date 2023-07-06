@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useData } from "../context/DataContext";
 import { getUserDetails } from "../services/userServices";
 import Loader from "../components/Loader";
-import { ACTIONS } from "../utils/constants";
+import { ACTIONS, errProceedings } from "../utils/constants";
 import { getBookmarks } from "../services/postServices";
 
 export default function Bookmarks() {
@@ -17,22 +17,23 @@ export default function Bookmarks() {
 
   useEffect(() => {
     async function fetchuserData() {
-      setBookmarkLoader(true);
-      const fetchedUser = await getUserDetails(
-        token,
-        user._id,
-        dataDispatch,
-        setBookmarkLoader
-      );
-      setBookmarkLoader(true);
+      try {
+        setBookmarkLoader(true);
+        const fetchedUser = await getUserDetails(token, user._id);
+        const resArr = await getBookmarks(token);
 
-      const resArr = await getBookmarks(token);
-
-      dataDispatch({
-        type: ACTIONS.FETCH_BOOKMARK_POSTS,
-        payload: { bookmarksID: fetchedUser.bookmarks, bookmarksPost: resArr },
-      });
-      setBookmarkLoader(false);
+        dataDispatch({
+          type: ACTIONS.FETCH_BOOKMARK_POSTS,
+          payload: {
+            bookmarksID: fetchedUser.bookmarks,
+            bookmarksPost: resArr,
+          },
+        });
+      } catch (err) {
+        errProceedings(err);
+      } finally {
+        setBookmarkLoader(false);
+      }
     }
     fetchuserData();
   }, []);

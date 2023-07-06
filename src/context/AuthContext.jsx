@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useImmer } from "use-immer";
 import { getUserDetails } from "../services/userServices";
 import jwt_decode from "jwt-decode";
+import { errProceedings } from "../utils/constants";
 
 const AuthContext = createContext({
   token: null,
@@ -25,11 +26,16 @@ export const AuthProvider = function ({ children }) {
 
   useEffect(() => {
     async function fetchData() {
-      setContentLoader(true);
-      const { _id: userID } = jwt_decode(token);
-      const res = await getUserDetails(token, userID);
-      setUser(res);
-      setContentLoader(false);
+      try {
+        setContentLoader(true);
+        const { _id: userID } = jwt_decode(token);
+        const res = await getUserDetails(token, userID);
+        setUser(res);
+      } catch (err) {
+        errProceedings(err);
+      } finally {
+        setContentLoader(false);
+      }
     }
     if (token) {
       fetchData();

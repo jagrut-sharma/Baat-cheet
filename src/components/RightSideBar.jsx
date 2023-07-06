@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { followUser, getUserDetails } from "../services/userServices";
 import Loader from "./Loader";
-import { ACTIONS } from "../utils/constants";
+import { ACTIONS, errProceedings } from "../utils/constants";
 
 export default function RightSideBar() {
   const [loader, setLoader] = useState(false);
@@ -30,24 +30,25 @@ export default function RightSideBar() {
 
   const handleFollow = async (e, followUserID) => {
     e.preventDefault();
-    setLoader(true);
-    await followUser(
-      followUserID,
-      token,
-      dataDispatch,
-      setLoader,
-      userID,
-      setUser
-    );
+    try {
+      setLoader(true);
+      const res = await followUser(followUserID, token);
 
-    const profileUser = await getUserDetails(
-      token,
-      userID,
-      dataDispatch,
-      setLoader
-    );
-    dataDispatch({ type: ACTIONS.USER_FOLLOW_UNFOLLOW, payload: profileUser });
-    setLoader(false);
+      if (res.status === 200) {
+        const resUser = await getUserDetails(token, userID);
+        setUser(resUser);
+      }
+
+      const profileUser = await getUserDetails(token, userID);
+      dataDispatch({
+        type: ACTIONS.USER_FOLLOW_UNFOLLOW,
+        payload: profileUser,
+      });
+    } catch (err) {
+      errProceedings(err);
+    } finally {
+      setLoader(false);
+    }
   };
 
   return (

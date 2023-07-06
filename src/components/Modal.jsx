@@ -5,11 +5,18 @@ import { BsFillImageFill, BsFillPlusCircleFill } from "react-icons/bs";
 import AvatarEle from "./AvatarEle";
 import { useData } from "../context/DataContext";
 import { useAuth } from "../context/AuthContext";
-import { createNewPost, editPost } from "../services/postServices";
+import {
+  createNewPost,
+  editPost,
+  getAllPosts,
+  getLikedPosts,
+  getSingleUserPosts,
+} from "../services/postServices";
 import { useMedia } from "../hooks/useMedia";
 import { ClipLoader } from "react-spinners";
 import EmojiPopover from "./EmojiPopover";
 import { useParams } from "react-router-dom";
+import { ACTIONS, errProceedings } from "../utils/constants";
 
 export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
   const [post, setPost] = useState(contents?.content || "");
@@ -23,31 +30,61 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
 
   const handleNewPost = async (e) => {
     e.preventDefault();
-    setLoader(true);
-    const postDetails = {
-      content: post,
-      imgURL: postPic,
-    };
-    createNewPost(token, dataDispatch, postDetails, user, userID);
-    setPost("");
-    setPostPic("");
-    setLoader(false);
-    closeModal();
+    try {
+      setLoader(true);
+      const postDetails = {
+        content: post,
+        imgURL: postPic,
+      };
+      await createNewPost(token, postDetails);
+
+      const allPosts = await getAllPosts(token);
+      dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+      const likedPosts = getLikedPosts(allPosts, user);
+      dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+
+      if (userID === user._id) {
+        const userPosts = await getSingleUserPosts(token, user._id);
+        dataDispatch({
+          type: ACTIONS.FETCH_PROFILE_POST,
+          payload: userPosts,
+        });
+      }
+
+      setPost("");
+      setPostPic("");
+      closeModal();
+    } catch (err) {
+      errProceedings(err);
+    } finally {
+      setLoader(false);
+    }
   };
 
   const handleEditPost = async (e) => {
     e.preventDefault();
-    setLoader(true);
-    const postID = contents._id;
-    const postDetails = {
-      content: post,
-      imgURL: postPic,
-    };
-    const newContent = { ...contents, content: post, imgURL: postPic };
-    await editPost(token, dataDispatch, postDetails, postID, newContent);
-    setPost(post);
-    setLoader(false);
-    setIsOpen(false);
+
+    try {
+      setLoader(true);
+      const postID = contents._id;
+      const postDetails = {
+        content: post,
+        imgURL: postPic,
+      };
+      const newContent = { ...contents, content: post, imgURL: postPic };
+      await editPost(token, postDetails, postID);
+      dataDispatch({ type: ACTIONS.EDIT_POST, payload: newContent });
+
+      setPost(post);
+      setIsOpen(false);
+    } catch (err) {
+      console.log(err);
+      const errRes = err?.response?.data?.message ?? "";
+      const errMsg = err?.response?.data?.error ?? "";
+      console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
+    } finally {
+      setLoader(false);
+    }
   };
 
   const handleChange = (e) => {

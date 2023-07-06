@@ -54,3 +54,10 @@ export const avatarList = [
   "https://res.cloudinary.com/drehkcoil/image/upload/v1688213822/Avatars/Avatar-7_k0hkhf.png",
   "https://res.cloudinary.com/drehkcoil/image/upload/v1688213821/Avatars/Avatar-8_eagm9i.png",
 ];
+
+export const errProceedings = (err) => {
+  console.log(err);
+  const errRes = err?.response?.data?.message ?? "";
+  const errMsg = err?.response?.data?.error ?? "";
+  console.log(`${err?.response?.status}:${errRes} ${errMsg}`);
+};

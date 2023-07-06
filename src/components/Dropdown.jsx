@@ -6,6 +6,7 @@ import Modal from "./Modal";
 import { deletePost } from "../services/postServices";
 import { useAuth } from "../context/AuthContext";
 import { useData } from "../context/DataContext";
+import { ACTIONS, errProceedings } from "../utils/constants";
 
 export default function Dropdown({ post }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,9 +15,13 @@ export default function Dropdown({ post }) {
 
   const handleDelete = async (e) => {
     e.preventDefault;
-    console.log("Deleting");
-    const postID = post._id;
-    await deletePost(token, dataDispatch, postID);
+    try {
+      const postID = post._id;
+      await deletePost(token, postID);
+      dataDispatch({ type: ACTIONS.DELETE_POST, payload: postID });
+    } catch (err) {
+      errProceedings(err);
+    }
   };
 
   return (

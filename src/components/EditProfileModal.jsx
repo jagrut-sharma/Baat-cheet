@@ -12,7 +12,9 @@ import DropdownEditProfile from "./DropdownEditProfile";
 import { useMedia } from "../hooks/useMedia";
 import { getAllPosts, getLikedPosts } from "../services/postServices";
 import AvatarSelectModal from "./AvatarSelectModal";
-import { ACTIONS } from "../utils/constants";
+import { ACTIONS, errProceedings } from "../utils/constants";
+import { toast } from "react-toastify";
+import { toastConfig } from "../utils/constants";
 
 export default function EditProfileModal() {
   let [isOpen, setIsOpen] = useState(false);
@@ -40,30 +42,31 @@ export default function EditProfileModal() {
   };
 
   const handleUpdateProfile = async () => {
-    setLoader(true);
+    try {
+      setLoader(true);
 
-    const res = await updateProfile(token, userDetails, setLoader);
-    if (res.status === 200) {
-      const resUser = await getUserDetails(
-        token,
-        user._id,
-        dataDispatch,
-        setLoader
-      );
+      const res = await updateProfile(token, userDetails);
+      if (res.status === 200) {
+        const resUser = await getUserDetails(token, user._id);
 
-      dataDispatch({ type: ACTIONS.FETCH_PROFILE_DETAILS, payload: resUser });
-      dataDispatch({ type: ACTIONS.EDIT_PROFILE, payload: resUser });
-      setUser(resUser);
-      localStorage.setItem("user", JSON.stringify(resUser));
+        dataDispatch({ type: ACTIONS.FETCH_PROFILE_DETAILS, payload: resUser });
+        dataDispatch({ type: ACTIONS.EDIT_PROFILE, payload: resUser });
+        setUser(resUser);
+        localStorage.setItem("user", JSON.stringify(resUser));
 
-      const allPosts = await getAllPosts(token);
-      dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
-      const likedPosts = getLikedPosts(allPosts, user);
-      dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+        const allPosts = await getAllPosts(token);
+        dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+        const likedPosts = getLikedPosts(allPosts, user);
+        dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
 
-      setIsOpen(false);
+        setIsOpen(false);
+      }
+    } catch (err) {
+      errProceedings(err);
+      toast.error("Some error occured, Try again", toastConfig);
+    } finally {
+      setLoader(false);
     }
-    setLoader(false);
   };
 
   const handleUploadChange = async (e) => {
