@@ -16,7 +16,7 @@ export const getAllPosts = async (token) => {
   return posts;
 };
 
-export const createNewPost = async (token, dispatch, post, user) => {
+export const createNewPost = async (token, dispatch, post, user, profileID) => {
   try {
     await axios.post(`${baseURL}/api/post`, post, {
       headers: {
@@ -29,7 +29,9 @@ export const createNewPost = async (token, dispatch, post, user) => {
     const likedPosts = getLikedPosts(allPosts, user);
     dispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
 
-    getSingleUserPosts(token, user._id, dispatch);
+    if (profileID === user._id) {
+      getSingleUserPosts(token, user._id, dispatch);
+    }
   } catch (err) {
     console.log(err);
     const errRes = err?.response?.data?.message ?? "";

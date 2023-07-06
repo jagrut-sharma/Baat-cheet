@@ -9,6 +9,7 @@ import { createNewPost, editPost } from "../services/postServices";
 import { useMedia } from "../hooks/useMedia";
 import { ClipLoader } from "react-spinners";
 import EmojiPopover from "./EmojiPopover";
+import { useParams } from "react-router-dom";
 
 export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
   const [post, setPost] = useState(contents?.content || "");
@@ -18,6 +19,7 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
   const { dataDispatch } = useData();
   const { token, user } = useAuth();
   const { uploadMedia } = useMedia();
+  const { userID } = useParams();
 
   const handleNewPost = async (e) => {
     e.preventDefault();
@@ -26,7 +28,7 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
       content: post,
       imgURL: postPic,
     };
-    createNewPost(token, dataDispatch, postDetails, user);
+    createNewPost(token, dataDispatch, postDetails, user, userID);
     setPost("");
     setPostPic("");
     setLoader(false);
