@@ -23,6 +23,7 @@ export default {
         navVColLayout: "13rem 1fr 18rem",
         responsiveNavLayout: "auto 1fr auto",
         responsiveOutlet: "1fr",
+        avatarLayout: "repeat(4, auto)",
       },
       keyframes: {
         slideUpAndFade: {
