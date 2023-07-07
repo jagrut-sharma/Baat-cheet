@@ -9,6 +9,7 @@ export const initialData = {
   likedPosts: [],
   bookmarkedPosts: [],
   bookmarkedPostsID: [],
+  singlePostDetail: null,
 };
 
 export const dataReducer = (draft, action) => {
@@ -116,6 +117,11 @@ export const dataReducer = (draft, action) => {
 
     case ACTIONS.USER_FOLLOW_UNFOLLOW: {
       draft.profileDetails = action.payload;
+      break;
+    }
+
+    case ACTIONS.FETCH_SINGLE_POST: {
+      draft.singlePostDetail = action.payload;
       break;
     }
 

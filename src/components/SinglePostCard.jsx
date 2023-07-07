@@ -1,86 +1,64 @@
 /* eslint-disable react/prop-types */
-import * as Separator from "@radix-ui/react-separator";
-import {
-  BsBookmark,
-  BsHeart,
-  BsFillHeartFill,
-  BsFillBookmarkFill,
-} from "react-icons/bs";
-// import { FaRegComment } from "react-icons/fa";
-
-import AvatarEle from "./AvatarEle";
-import Dropdown from "./Dropdown";
-import { getHumanizeTimeForOlderPost } from "../utils/helperFunctions";
-import { useAuth } from "../context/AuthContext";
-import { Link, useParams } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useData } from "../context/DataContext";
+import { useParams } from "react-router-dom";
+import * as Separator from "@radix-ui/react-separator";
 import {
   bookmarkPost,
   dislikePost,
   getAllPosts,
   getBookmarks,
   getLikedPosts,
-  getSingleUserPosts,
+  getSinglePostDetails,
   likePost,
   unbookmarkPost,
 } from "../services/postServices";
-import { useData } from "../context/DataContext";
-import { getAllUsers, getUserDetails } from "../services/userServices";
 import { ACTIONS, errProceedings } from "../utils/constants";
+import { getAllUsers, getUserDetails } from "../services/userServices";
+import { Link } from "react-router-dom";
+import AvatarEle from "./AvatarEle";
+import { getHumanizeTimeForOlderPost } from "../utils/helperFunctions";
+import Dropdown from "./Dropdown";
+import {
+  BsBookmark,
+  BsFillBookmarkFill,
+  BsFillHeartFill,
+  BsHeart,
+} from "react-icons/bs";
+import { FaRegComment } from "react-icons/fa";
 
-export default function Post({ post, fromProfilePost, fromBookmark }) {
+export default function SinglePostCard({ post }) {
   const { user, token } = useAuth();
   const { dataState, dataDispatch } = useData();
   const [postLoader, setPostLoader] = useState(false);
-  const { userID } = useParams();
+  const { postID } = useParams();
 
   let isLiked;
 
-  if (fromProfilePost) {
-    const likedArr = post?.likes?.likedBy.map(({ _id }) => _id);
-    isLiked = likedArr.includes(user._id);
-  } else {
-    isLiked = post?.likes?.likedBy.includes(user._id);
-  }
+  const likedArr = post?.likes?.likedBy.map(({ _id }) => _id);
+  isLiked = likedArr.includes(user._id);
 
   const isBookmarked = dataState.bookmarkedPostsID.includes(post._id);
 
   const handleLike = async () => {
     try {
       setPostLoader(true);
-      let res;
 
       if (isLiked) {
-        res = await dislikePost(token, post._id);
+        await dislikePost(token, post._id);
       } else {
-        res = await likePost(token, post._id);
+        await likePost(token, post._id);
       }
 
       const allPosts = await getAllPosts(token);
       dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+
       const likedPosts = getLikedPosts(allPosts, user);
       dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
 
-      if (res.status === 200 && fromProfilePost) {
-        const userPosts = await getSingleUserPosts(token, userID);
-        dataDispatch({
-          type: ACTIONS.FETCH_PROFILE_POST,
-          payload: userPosts,
-        });
-      }
-
-      if (res.status === 200 && fromBookmark) {
-        const fetchedUser = await getUserDetails(token, user._id);
-        setPostLoader(true);
-        const resArr = await getBookmarks(token);
-        dataDispatch({
-          type: ACTIONS.FETCH_BOOKMARK_POSTS,
-          payload: {
-            bookmarksID: fetchedUser.bookmarks,
-            bookmarksPost: resArr,
-          },
-        });
-      }
+      const postDetails = await getSinglePostDetails(token, postID);
+      dataDispatch({ type: ACTIONS.FETCH_SINGLE_POST, payload: postDetails });
     } catch (error) {
       errProceedings(error);
     } finally {
@@ -162,21 +140,19 @@ export default function Post({ post, fromProfilePost, fromBookmark }) {
         {getHumanizeTimeForOlderPost(new Date(), post.createdAt)}
       </span>
 
-      <Link to={`/post/${post._id}`}>
-        <p className="mt-2 px-4 pb-2 text-base dark:text-slate-50">
-          {post.content}
-        </p>
+      <p className="mt-2 px-4 pb-2 text-base dark:text-slate-50">
+        {post.content}
+      </p>
 
-        {post.imgURL && (
-          <div className="mb-4 flex justify-center">
-            <img
-              src={post.imgURL}
-              alt={`${post.author._id}'s image`}
-              className="w-full object-cover px-4"
-            />
-          </div>
-        )}
-      </Link>
+      {post.imgURL && (
+        <div className="mb-4 flex justify-center">
+          <img
+            src={post.imgURL}
+            alt={`${post.author._id}'s image`}
+            className="w-full object-cover px-4"
+          />
+        </div>
+      )}
 
       <Separator.Root className="self-start bg-gray-300 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-[100%] data-[orientation=vertical]:w-px dark:bg-gray-500" />
 
@@ -229,9 +205,17 @@ export default function Post({ post, fromProfilePost, fromBookmark }) {
             />
           )}
         </button>
-        {/* <button className="rounded-full p-2 hover:bg-blue-100 dark:hover:bg-gray-600">
-          <FaRegComment size={"1.2rem"} className="cursor-pointer" />
-        </button> */}
+
+        <div className="flex items-center">
+          <button className="rounded-full p-2 hover:bg-blue-100 dark:hover:bg-gray-600">
+            <FaRegComment size={"1.2rem"} className="cursor-pointer" />
+          </button>
+          <span
+            className={`${post.comments.length > 0 ? "visible" : "invisible"}`}
+          >
+            {post.comments.length}
+          </span>
+        </div>
       </div>
     </div>
   );
