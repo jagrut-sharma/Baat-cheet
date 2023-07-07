@@ -19,6 +19,8 @@ export default function Home() {
   const { dataState, dataDispatch } = useData();
   const postCategory = ["Recent", "Trending"];
 
+  console.log(dataState.allPosts);
+
   useEffect(() => {
     async function fetchPosts() {
       try {
