@@ -54,6 +54,9 @@ export const dataReducer = (draft, action) => {
       draft.profilePosts = draft.profilePosts.filter(
         (post) => post._id !== postID
       );
+      draft.bookmarkedPosts = draft.bookmarkedPosts.filter(
+        (post) => post._id !== postID
+      );
       break;
     }
 
