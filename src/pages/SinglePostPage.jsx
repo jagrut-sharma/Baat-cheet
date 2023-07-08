@@ -6,10 +6,10 @@ import { useAuth } from "../context/AuthContext";
 import { useData } from "../context/DataContext";
 import { getSinglePostDetails } from "../services/postServices";
 import { ACTIONS, errProceedings } from "../utils/constants";
-import NewComment from "../components/newComment";
+import NewComment from "../components/NewComment";
 import { getHumanizeTimeForOlderPost } from "../utils/helperFunctions";
 import AvatarEle from "../components/AvatarEle";
-import Dropdown from "../components/Dropdown";
+// import Dropdown from "../components/Dropdown";
 
 export default function SinglePostPage() {
   const [postLoader, setPostLoader] = useState(true);
@@ -35,8 +35,6 @@ export default function SinglePostPage() {
 
     fetchData();
   }, []);
-
-  console.log(singlePostDetail);
 
   return (
     <main className="relative flex flex-col items-center">
@@ -64,7 +62,7 @@ export default function SinglePostPage() {
                     return (
                       <div
                         key={comment._id}
-                        className={`mb-4 w-[100%] rounded-md border border-gray-200 bg-white pb-2 shadow-md dark:border-gray-600 dark:bg-gray-700 ${
+                        className={`mb-2 w-[100%] rounded-md border border-gray-200 bg-white pb-2 shadow-md dark:border-gray-600 dark:bg-gray-700 ${
                           postLoader ? "cursor-not-allowed" : ""
                         }`}
                       >
