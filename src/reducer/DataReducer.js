@@ -46,6 +46,7 @@ export const dataReducer = (draft, action) => {
       draft.bookmarkedPosts = draft.bookmarkedPosts.map((post) =>
         post._id === newPost._id ? newPost : post
       );
+      draft.singlePostDetail = action.payload;
       break;
     }
 
@@ -58,6 +59,9 @@ export const dataReducer = (draft, action) => {
       draft.bookmarkedPosts = draft.bookmarkedPosts.filter(
         (post) => post._id !== postID
       );
+      if (postID === draft.singlePostDetail._id) {
+        draft.singlePostDetail = null;
+      }
       break;
     }
 

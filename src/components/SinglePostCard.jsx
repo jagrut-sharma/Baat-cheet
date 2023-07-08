@@ -186,7 +186,7 @@ export default function SinglePostCard({ post }) {
         </div>
 
         <button
-          className="rounded-full p-2 text-blue-700 hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"
+          className="mr-[8px] rounded-full p-2 text-blue-700 hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"
           onClick={handleBookmark}
         >
           {isBookmarked ? (
@@ -208,7 +208,11 @@ export default function SinglePostCard({ post }) {
 
         <div className="flex items-center">
           <button className="rounded-full p-2 hover:bg-blue-100 dark:hover:bg-gray-600">
-            <FaRegComment size={"1.2rem"} className="cursor-pointer" />
+            <FaRegComment
+              size={"1.2rem"}
+              className="cursor-pointer"
+              color="#10b981"
+            />
           </button>
           <span
             className={`${post.comments.length > 0 ? "visible" : "invisible"}`}

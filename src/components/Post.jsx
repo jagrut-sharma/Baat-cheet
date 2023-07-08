@@ -6,7 +6,7 @@ import {
   BsFillHeartFill,
   BsFillBookmarkFill,
 } from "react-icons/bs";
-// import { FaRegComment } from "react-icons/fa";
+import { FaRegComment } from "react-icons/fa";
 
 import AvatarEle from "./AvatarEle";
 import Dropdown from "./Dropdown";
@@ -162,21 +162,19 @@ export default function Post({ post, fromProfilePost, fromBookmark }) {
         {getHumanizeTimeForOlderPost(new Date(), post.createdAt)}
       </span>
 
-      <Link to={`/post/${post._id}`}>
-        <p className="mt-2 px-4 pb-2 text-base dark:text-slate-50">
-          {post.content}
-        </p>
+      <p className="mt-2 px-4 pb-2 text-base dark:text-slate-50">
+        {post.content}
+      </p>
 
-        {post.imgURL && (
-          <div className="mb-4 flex justify-center">
-            <img
-              src={post.imgURL}
-              alt={`${post.author._id}'s image`}
-              className="w-full object-cover px-4"
-            />
-          </div>
-        )}
-      </Link>
+      {post.imgURL && (
+        <div className="mb-4 flex justify-center">
+          <img
+            src={post.imgURL}
+            alt={`${post.author._id}'s image`}
+            className="w-full object-cover px-4"
+          />
+        </div>
+      )}
 
       <Separator.Root className="self-start bg-gray-300 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-[100%] data-[orientation=vertical]:w-px dark:bg-gray-500" />
 
@@ -210,7 +208,7 @@ export default function Post({ post, fromProfilePost, fromBookmark }) {
         </div>
 
         <button
-          className="rounded-full p-2 text-blue-700 hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"
+          className="mr-[8px] rounded-full p-2 text-blue-700 hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"
           onClick={handleBookmark}
         >
           {isBookmarked ? (
@@ -229,9 +227,24 @@ export default function Post({ post, fromProfilePost, fromBookmark }) {
             />
           )}
         </button>
-        {/* <button className="rounded-full p-2 hover:bg-blue-100 dark:hover:bg-gray-600">
-          <FaRegComment size={"1.2rem"} className="cursor-pointer" />
-        </button> */}
+
+        <div className="flex items-center">
+          <Link
+            to={`/post/${post._id}`}
+            className="rounded-full p-2 hover:bg-blue-100 dark:hover:bg-gray-600"
+          >
+            <FaRegComment
+              size={"1.2rem"}
+              className="cursor-pointer"
+              color="#10b981"
+            />
+          </Link>
+          <span
+            className={`${post.comments.length > 0 ? "visible" : "invisible"}`}
+          >
+            {post.comments.length}
+          </span>
+        </div>
       </div>
     </div>
   );
