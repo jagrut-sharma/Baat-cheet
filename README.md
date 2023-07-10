@@ -54,6 +54,7 @@ $ npm run dev
 - Tailwind CSS
 - Headless UI
 - Radix UI
+- Consists if real backend
 
 ## **Screenshots :**
 
