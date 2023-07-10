@@ -5,7 +5,6 @@
 
   <a href="https://share.vidyard.com/watch/mrzPFVkofU6VwNonfPM795?" target='_blank'>
     <p>Baatcheet | Social Media - Watch Video</p>
-    <img style="max-width:300px;" src="https://cdn.vidyard.com/thumbnails/37542761/VkxzpFGrPrVAcI7CTM3z4Q_play_button_small.jpg">
   </a>
 
 </div>
