@@ -3,7 +3,7 @@ import AvatarEle from "./AvatarEle";
 import { useAuth } from "../context/AuthContext";
 import EmojiPopover from "./EmojiPopover";
 import { useState } from "react";
-import { ACTIONS, errProceedings } from "../utils/constants";
+import { ACTIONS, errProceedings, errorToastConfig } from "../utils/constants";
 import { addComment, editComment } from "../services/commentServices";
 import { useParams } from "react-router-dom";
 import {
@@ -13,6 +13,7 @@ import {
 } from "../services/postServices";
 import { useData } from "../context/DataContext";
 import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 export default function NewComment({ content, setIsEditing }) {
   const [comment, setComment] = useState(content ? content.comment : "");
@@ -29,6 +30,11 @@ export default function NewComment({ content, setIsEditing }) {
 
       const postDetails = await getSinglePostDetails(token, postID);
       dataDispatch({ type: ACTIONS.FETCH_SINGLE_POST, payload: postDetails });
+      const commentsEditData = {};
+      postDetails?.comments.forEach(
+        ({ _id }) => (commentsEditData[_id] = false)
+      );
+      setIsEditing({ ...commentsEditData });
 
       const allPosts = await getAllPosts(token);
       dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
@@ -56,6 +62,12 @@ export default function NewComment({ content, setIsEditing }) {
 
     try {
       setLoader(true);
+      if (comment.trim().length === 0) {
+        toast.error("You need to enter some text", errorToastConfig);
+        setComment("");
+        setLoader(false);
+        return;
+      }
       await editComment(postID, content._id, token, comment);
 
       const postDetails = await getSinglePostDetails(token, postID);

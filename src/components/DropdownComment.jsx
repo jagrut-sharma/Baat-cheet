@@ -33,7 +33,6 @@ export default function DropdownComment({ comment, setIsEditing, isEditing }) {
       postDetails?.comments.forEach(
         ({ _id }) => (commentsEditData[_id] = false)
       );
-
       setIsEditing({ ...commentsEditData });
       dataDispatch({ type: ACTIONS.FETCH_SINGLE_POST, payload: postDetails });
 

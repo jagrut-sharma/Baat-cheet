@@ -64,7 +64,7 @@ export default function SinglePostPage() {
                       : `${singlePostDetail.comments.length} replies`}
                   </h3>
 
-                  <NewComment />
+                  <NewComment setIsEditing={setIsEditing} />
 
                   {singlePostDetail.comments.map((comment) => (
                     <Comment

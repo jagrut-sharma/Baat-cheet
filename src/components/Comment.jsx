@@ -18,7 +18,11 @@ export default function Comment({
   return (
     <>
       {isEditing[comment._id] ? (
-        <NewComment content={comment} setIsEditing={setIsEditing} />
+        <NewComment
+          content={comment}
+          setIsEditing={setIsEditing}
+          isEditing={isEditing}
+        />
       ) : (
         <div
           className={`mb-2 w-[100%] rounded-md border border-gray-200 bg-white pb-2 shadow-md dark:border-gray-600 dark:bg-gray-700 ${

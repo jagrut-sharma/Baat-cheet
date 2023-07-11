@@ -92,6 +92,11 @@ export default function Modal({ isOpen, setIsOpen, isEditing, contents }) {
       await editPost(token, postDetails, postID);
       dataDispatch({ type: ACTIONS.EDIT_POST, payload: newContent });
 
+      const allPosts = await getAllPosts(token);
+      dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+      const likedPosts = getLikedPosts(allPosts, user);
+      dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+
       setPost(post);
       setIsOpen(false);
     } catch (err) {

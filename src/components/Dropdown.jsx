@@ -13,8 +13,7 @@ export default function Dropdown({ post }) {
   const { token } = useAuth();
   const { dataDispatch } = useData();
 
-  const handleDelete = async (e) => {
-    e.preventDefault();
+  const handleDelete = async () => {
     try {
       const postID = post._id;
       await deletePost(token, postID);
