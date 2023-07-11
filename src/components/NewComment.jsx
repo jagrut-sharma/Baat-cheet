@@ -1,16 +1,21 @@
+/* eslint-disable react/prop-types */
 import AvatarEle from "./AvatarEle";
 import { useAuth } from "../context/AuthContext";
 import EmojiPopover from "./EmojiPopover";
 import { useState } from "react";
 import { ACTIONS, errProceedings } from "../utils/constants";
-import { addComment } from "../services/commentServices";
+import { addComment, editComment } from "../services/commentServices";
 import { useParams } from "react-router-dom";
-import { getSinglePostDetails } from "../services/postServices";
+import {
+  getAllPosts,
+  getLikedPosts,
+  getSinglePostDetails,
+} from "../services/postServices";
 import { useData } from "../context/DataContext";
 import { ClipLoader } from "react-spinners";
 
-export default function NewComment() {
-  const [comment, setComment] = useState("");
+export default function NewComment({ content, setIsEditing }) {
+  const [comment, setComment] = useState(content ? content.comment : "");
   const [loader, setLoader] = useState(false);
   const { user, token } = useAuth();
   const { dataDispatch } = useData();
@@ -24,6 +29,12 @@ export default function NewComment() {
 
       const postDetails = await getSinglePostDetails(token, postID);
       dataDispatch({ type: ACTIONS.FETCH_SINGLE_POST, payload: postDetails });
+
+      const allPosts = await getAllPosts(token);
+      dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+
+      const likedPosts = getLikedPosts(allPosts, user);
+      dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
       setComment("");
     } catch (err) {
       errProceedings(err);
@@ -38,6 +49,29 @@ export default function NewComment() {
 
   const addEmoji = (emojiData) => {
     setComment((prev) => prev + emojiData.emoji);
+  };
+
+  const handleEdit = async (e) => {
+    e.preventDefault();
+
+    try {
+      setLoader(true);
+      await editComment(postID, content._id, token, comment);
+
+      const postDetails = await getSinglePostDetails(token, postID);
+      dataDispatch({ type: ACTIONS.FETCH_SINGLE_POST, payload: postDetails });
+      handleCancel();
+    } catch (err) {
+      errProceedings(err);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing((draft) => {
+      draft[content._id] = false;
+    });
   };
 
   return (
@@ -73,19 +107,38 @@ export default function NewComment() {
           <EmojiPopover handleEmojiClick={addEmoji} />
         </div>
 
-        <button className="m-2 w-[6.8rem] rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-500 dark:hover:opacity-80">
-          {loader ? (
-            <ClipLoader
-              color="#ffffff"
-              size={18}
-              cssOverride={{
-                marginTop: "4px",
-              }}
-            />
-          ) : (
-            "Comment"
+        <div>
+          {content && (
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="m-2 w-[6.8rem] rounded-md bg-gray-500 p-4 py-1 font-bold text-white hover:bg-opacity-80 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-400 dark:hover:opacity-80"
+            >
+              Cancel
+            </button>
           )}
-        </button>
+
+          <button
+            type="button"
+            className="m-2 w-[6.8rem] rounded-md bg-blue-600 p-4 py-1 font-bold text-white hover:bg-opacity-80 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-500 dark:hover:opacity-80"
+            onClick={content ? handleEdit : handleSubmit}
+            disabled={comment.length === 0}
+          >
+            {loader ? (
+              <ClipLoader
+                color="#ffffff"
+                size={18}
+                cssOverride={{
+                  marginTop: "4px",
+                }}
+              />
+            ) : content ? (
+              "Save"
+            ) : (
+              "Comment"
+            )}
+          </button>
+        </div>
       </div>
     </form>
   );

@@ -1,27 +1,62 @@
 /* eslint-disable react/prop-types */
 import { Menu, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { CiMenuKebab } from "react-icons/ci";
-import Modal from "./Modal";
-import { deletePost } from "../services/postServices";
 import { useAuth } from "../context/AuthContext";
+import { useParams } from "react-router-dom";
+import { deleteComment } from "../services/commentServices";
+import {
+  getAllPosts,
+  getLikedPosts,
+  getSinglePostDetails,
+} from "../services/postServices";
 import { useData } from "../context/DataContext";
-import { ACTIONS, errProceedings } from "../utils/constants";
+import {
+  ACTIONS,
+  errProceedings,
+  errorToastConfig,
+  toastConfig,
+} from "../utils/constants";
+import { toast } from "react-toastify";
 
-export default function Dropdown({ post }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const { token } = useAuth();
+export default function DropdownComment({ comment, setIsEditing, isEditing }) {
+  const { token, user } = useAuth();
+  const { postID } = useParams();
   const { dataDispatch } = useData();
+  //   console.log(comment);
 
-  const handleDelete = async (e) => {
-    e.preventDefault();
+  const handleDelete = async () => {
     try {
-      const postID = post._id;
-      await deletePost(token, postID);
-      dataDispatch({ type: ACTIONS.DELETE_POST, payload: postID });
+      await deleteComment(token, postID, comment._id);
+      const postDetails = await getSinglePostDetails(token, postID);
+      const commentsEditData = {};
+      postDetails?.comments.forEach(
+        ({ _id }) => (commentsEditData[_id] = false)
+      );
+
+      setIsEditing({ ...commentsEditData });
+      dataDispatch({ type: ACTIONS.FETCH_SINGLE_POST, payload: postDetails });
+
+      const allPosts = await getAllPosts(token);
+      dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
+
+      const likedPosts = getLikedPosts(allPosts, user);
+      dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
+      toast.info("Deleted comment", toastConfig);
     } catch (err) {
       errProceedings(err);
+      toast.error("Could not delete comment", errorToastConfig);
     }
+  };
+
+  const handleEditClick = () => {
+    const objectKeys = Object.keys(isEditing);
+    const isEditObj = {};
+    objectKeys.forEach((id) => {
+      isEditObj[id] = id === comment._id ? true : false;
+    });
+
+    setIsEditing(isEditObj);
   };
 
   return (
@@ -48,11 +83,7 @@ export default function Dropdown({ post }) {
         >
           <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:divide-gray-500 dark:bg-gray-600">
             <div className="px-1 py-1 ">
-              <Menu.Item
-                onClick={() => {
-                  setIsOpen(true);
-                }}
-              >
+              <Menu.Item onClick={handleEditClick}>
                 {({ active }) => (
                   <span
                     className={`${
@@ -108,7 +139,6 @@ export default function Dropdown({ post }) {
           </Menu.Items>
         </Transition>
       </Menu>
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen} isEditing contents={post} />
     </div>
   );
 }
