@@ -45,6 +45,7 @@ $ npm run dev
 - Add Emoji while creating a post
 - Edit User Profile Photo
 - Full Responsive design
+- Comments CRUD Operations
 
 ## **Built with -**
 
@@ -54,7 +55,7 @@ $ npm run dev
 - Tailwind CSS
 - Headless UI
 - Radix UI
-- Consists if real backend
+- Consists of real backend
 
 ## **Screenshots :**
 
