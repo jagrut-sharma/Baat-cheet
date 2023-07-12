@@ -126,3 +126,17 @@ export const getBookmarks = async (token) => {
 
   return bookmarks;
 };
+
+export const getSinglePostDetails = async (token, postID) => {
+  const res = await axios.get(`${baseURL}/api/post/${postID}`, {
+    headers: {
+      Authorization: token,
+    },
+  });
+
+  const {
+    data: { post },
+  } = res;
+
+  return post;
+};

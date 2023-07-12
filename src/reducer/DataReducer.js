@@ -9,6 +9,7 @@ export const initialData = {
   likedPosts: [],
   bookmarkedPosts: [],
   bookmarkedPostsID: [],
+  singlePostDetail: null,
 };
 
 export const dataReducer = (draft, action) => {
@@ -45,6 +46,7 @@ export const dataReducer = (draft, action) => {
       draft.bookmarkedPosts = draft.bookmarkedPosts.map((post) =>
         post._id === newPost._id ? newPost : post
       );
+      draft.singlePostDetail = action.payload;
       break;
     }
 
@@ -57,6 +59,9 @@ export const dataReducer = (draft, action) => {
       draft.bookmarkedPosts = draft.bookmarkedPosts.filter(
         (post) => post._id !== postID
       );
+      if (postID === draft.singlePostDetail._id) {
+        draft.singlePostDetail = null;
+      }
       break;
     }
 
@@ -116,6 +121,11 @@ export const dataReducer = (draft, action) => {
 
     case ACTIONS.USER_FOLLOW_UNFOLLOW: {
       draft.profileDetails = action.payload;
+      break;
+    }
+
+    case ACTIONS.FETCH_SINGLE_POST: {
+      draft.singlePostDetail = action.payload;
       break;
     }
 

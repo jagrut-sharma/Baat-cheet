@@ -15,6 +15,7 @@ import RequireAuth from "./components/RequireAuth";
 import ProfileRootLayout from "./pages/ProfileRootLayout";
 import GuestProfile from "./pages/GuestProfile";
 import ErrorPage from "./pages/ErrorPage";
+import SinglePostPage from "./pages/SinglePostPage";
 
 const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
             element: <GuestProfile />,
           },
         ],
+      },
+      {
+        path: "/post/:postID",
+        element: <SinglePostPage />,
       },
     ],
   },
