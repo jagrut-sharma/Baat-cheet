@@ -30,6 +30,8 @@ export default function NewComment({ content, setIsEditing }) {
 
       const postDetails = await getSinglePostDetails(token, postID);
       dataDispatch({ type: ACTIONS.FETCH_SINGLE_POST, payload: postDetails });
+      setComment("");
+
       const commentsEditData = {};
       postDetails?.comments.forEach(
         ({ _id }) => (commentsEditData[_id] = false)
@@ -41,7 +43,6 @@ export default function NewComment({ content, setIsEditing }) {
 
       const likedPosts = getLikedPosts(allPosts, user);
       dataDispatch({ type: ACTIONS.ADD_LIKED_POST, payload: likedPosts });
-      setComment("");
     } catch (err) {
       errProceedings(err);
     } finally {
@@ -125,6 +126,7 @@ export default function NewComment({ content, setIsEditing }) {
               type="button"
               onClick={handleCancel}
               className="m-2 w-[6.8rem] rounded-md bg-gray-500 p-4 py-1 font-bold text-white hover:bg-opacity-80 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-400 dark:hover:opacity-80"
+              disabled={loader}
             >
               Cancel
             </button>

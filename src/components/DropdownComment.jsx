@@ -23,18 +23,18 @@ export default function DropdownComment({ comment, setIsEditing, isEditing }) {
   const { token, user } = useAuth();
   const { postID } = useParams();
   const { dataDispatch } = useData();
-  //   console.log(comment);
 
   const handleDelete = async () => {
     try {
       await deleteComment(token, postID, comment._id);
       const postDetails = await getSinglePostDetails(token, postID);
+      dataDispatch({ type: ACTIONS.FETCH_SINGLE_POST, payload: postDetails });
+
       const commentsEditData = {};
       postDetails?.comments.forEach(
         ({ _id }) => (commentsEditData[_id] = false)
       );
       setIsEditing({ ...commentsEditData });
-      dataDispatch({ type: ACTIONS.FETCH_SINGLE_POST, payload: postDetails });
 
       const allPosts = await getAllPosts(token);
       dataDispatch({ type: ACTIONS.FETCH_ALL_POSTS, payload: allPosts });
