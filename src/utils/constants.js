@@ -17,8 +17,8 @@ export const ACTIONS = {
 };
 
 export const guestUser = {
-  email: "jagrut@gmail.com",
-  password: "jagrut",
+  email: "random@gmail.com",
+  password: "random",
 };
 
 export const toastConfig = {
